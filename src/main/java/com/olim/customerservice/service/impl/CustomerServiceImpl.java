@@ -39,11 +39,15 @@ public class CustomerServiceImpl implements CustomerService {
         if (!center.get().getOwner().equals(userId)) {
             throw new PermissionFailException("회원을 등록할 권한이 없습니다.");
         }
-        Optional<Instructor> instructor = this.instructorRepository.findById(customerEnrollRequest.instructorId());
-        if (!instructor.isPresent()) {
-            throw new DataNotFoundException("해당 강사를 찾을 수 없습니다.");
+        Instructor gotInstructor = null;
+        if (!customerEnrollRequest.instructorId().equals(null)) {
+            Optional<Instructor> instructor = this.instructorRepository.findById(customerEnrollRequest.instructorId());
+            if (!instructor.isPresent()) {
+                throw new DataNotFoundException("해당 강사를 찾을 수 없습니다.");
+            }
+            gotInstructor = instructor.get();
         }
-        Instructor gotInstructor = instructor.isPresent() ? instructor.get() : null;
+
         Customer customer = Customer.builder()
                 .name(customerEnrollRequest.name())
                 .gender(customerEnrollRequest.gender())
