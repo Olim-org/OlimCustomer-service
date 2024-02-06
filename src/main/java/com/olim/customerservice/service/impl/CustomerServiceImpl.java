@@ -43,6 +43,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (!instructor.isPresent()) {
             throw new DataNotFoundException("해당 강사를 찾을 수 없습니다.");
         }
+        Instructor gotInstructor = instructor.isPresent() ? instructor.get() : null;
         Customer customer = Customer.builder()
                 .name(customerEnrollRequest.name())
                 .gender(customerEnrollRequest.gender())
@@ -50,7 +51,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .birthDate(LocalDate.parse(customerEnrollRequest.birthDate(), DateTimeFormatter.ISO_DATE))
                 .center(center.get())
                 .phoneNumber(customerEnrollRequest.phoneNumber())
-                .instructor(instructor.get()).build();
+                .instructor(gotInstructor).build();
         Customer savedCustomer = this.customerRepository.save(customer);
         return "성공적으로 " + customerEnrollRequest.name() +" 회원이 등록 되었습니다.";
     }

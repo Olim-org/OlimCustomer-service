@@ -21,7 +21,7 @@ public class Customer extends BaseEntity {
     private LocalDate birthDate;
     private String phoneNumber;
     private String address;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JsonIgnore
     @ToString.Exclude
     @JoinColumn(name = "INSTRUCTOR_ID")
