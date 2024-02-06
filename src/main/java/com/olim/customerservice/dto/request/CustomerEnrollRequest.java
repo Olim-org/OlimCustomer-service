@@ -24,7 +24,6 @@ public record CustomerEnrollRequest(
         String address,
         @Schema(description = "강사 ID", example = "5")
         Long instructorId,
-        @NotBlank
         @Schema(description = "센터 UUID", example = "asdfw-rwqvc-vx")
         UUID centerId
 ) {

@@ -1,6 +1,7 @@
 package com.olim.customerservice.controller;
 
 import com.olim.customerservice.dto.request.CustomerEnrollRequest;
+import com.olim.customerservice.dto.response.CustomerListResponse;
 import com.olim.customerservice.service.CustomerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -31,5 +32,14 @@ public class CustomerController {
     })
     public ResponseEntity<String> enrollCustomer(@RequestBody CustomerEnrollRequest customerEnrollRequest, @RequestHeader("id") String userId) {
         return new ResponseEntity<>(this.customerService.enrollCustomer(customerEnrollRequest, UUID.fromString(userId)), HttpStatus.OK);
+    }
+    @GetMapping("/list")
+    @Operation(description = "센터 내 회원 목록 불러오기")
+    @Parameters({
+            @Parameter(name = "centerId", description = "센터 UUID", required = true, in = ParameterIn.QUERY, example = "asdf-qr-xcv-daf"),
+            @Parameter(name = "centerId", description = "액세스 토큰 아이디", required = true, in = ParameterIn.HEADER, example = "asdf-qr-xcv-daf")
+    })
+    public ResponseEntity<CustomerListResponse> getListCustomer(@RequestParam(value = "center") String centerId, @RequestHeader("id") String userId) {
+        return new ResponseEntity<>(this.customerService.getListCustomer(UUID.fromString(centerId), UUID.fromString(userId)), HttpStatus.OK);
     }
 }
