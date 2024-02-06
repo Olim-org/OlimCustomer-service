@@ -40,7 +40,7 @@ public class CustomerServiceImpl implements CustomerService {
             throw new PermissionFailException("회원을 등록할 권한이 없습니다.");
         }
         Instructor gotInstructor = null;
-        if (!customerEnrollRequest.instructorId().equals(null)) {
+        if (customerEnrollRequest.instructorId() != null) {
             Optional<Instructor> instructor = this.instructorRepository.findById(customerEnrollRequest.instructorId());
             if (!instructor.isPresent()) {
                 throw new DataNotFoundException("해당 강사를 찾을 수 없습니다.");
