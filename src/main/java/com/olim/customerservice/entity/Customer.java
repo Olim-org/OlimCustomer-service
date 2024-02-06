@@ -5,6 +5,8 @@ import com.olim.customerservice.enumeration.Gender;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -16,6 +18,7 @@ public class Customer extends BaseEntity {
     private String name;
     @Enumerated(value = EnumType.STRING)
     private Gender gender;
+    private LocalDate birthDate;
     private String phoneNumber;
     private String address;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -32,6 +35,7 @@ public class Customer extends BaseEntity {
     public Customer(
             String name,
             Gender gender,
+            LocalDate birthDate,
             String phoneNumber,
             String address,
             Center center,
@@ -40,6 +44,7 @@ public class Customer extends BaseEntity {
         this.name = name;
         this.gender = gender;
         this.phoneNumber = phoneNumber;
+        this.birthDate = birthDate;
         this.address = address;
         this.center = center;
         this.instructor = instructor;
