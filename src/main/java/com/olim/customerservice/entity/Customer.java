@@ -3,10 +3,7 @@ package com.olim.customerservice.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.olim.customerservice.enumeration.Gender;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 @Entity
 @Getter
@@ -15,8 +12,9 @@ public class Customer extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CUSTOMER_ID")
-    private long id;
+    private Long id;
     private String name;
+    @Enumerated(value = EnumType.STRING)
     private Gender gender;
     private String phoneNumber;
     private String address;
@@ -25,5 +23,25 @@ public class Customer extends BaseEntity {
     @ToString.Exclude
     @JoinColumn(name = "INSTRUCTOR_ID")
     private Instructor instructor;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @ToString.Exclude
+    @JoinColumn(name = "CENTER_ID")
+    private Center center;
+    @Builder
+    public Customer(
+            String name,
+            Gender gender,
+            String phoneNumber,
+            String address,
+            Center center,
+            Instructor instructor
+    ) {
+        this.name = name;
+        this.gender = gender;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.center = center;
+        this.instructor = instructor;
+    }
 }

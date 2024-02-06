@@ -13,7 +13,7 @@ import java.util.List;
 public class Instructor extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     private String name;
     @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL)
     private List<Customer> customers;
