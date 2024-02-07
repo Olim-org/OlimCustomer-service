@@ -21,8 +21,6 @@ public class Center extends BaseEntity {
     private UUID id;
     private String name;
     @OneToMany(mappedBy = "center", cascade = CascadeType.ALL)
-    private List<CenterAdmin> centerAdmins;
-    @OneToMany(mappedBy = "center", cascade = CascadeType.ALL)
     private Set<Customer> customers;
     @OneToMany(mappedBy = "center", cascade = CascadeType.ALL)
     private Set<Instructor> instructors;
@@ -33,7 +31,6 @@ public class Center extends BaseEntity {
         UUID owner
     ) {
         this.name = name;
-        this.centerAdmins = new ArrayList<>();
         this.customers = new HashSet<>();
         this.instructors = new HashSet<>();
         this.owner = owner;
