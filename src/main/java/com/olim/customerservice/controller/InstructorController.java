@@ -51,7 +51,6 @@ public class InstructorController {
             @RequestParam(value = "count", defaultValue = "20") int count,
             @RequestParam(value = "keyword", defaultValue = "") String keyword,
             @RequestHeader("id") String userId
-
     ) {
         return new ResponseEntity<>(this.instructorService.getInstructorListByCenter(UUID.fromString(centerId), UUID.fromString(userId), keyword, page, count), HttpStatus.OK);
     }
