@@ -10,5 +10,5 @@ public interface CustomerService {
     @Transactional
     String enrollCustomer(CustomerEnrollRequest customerEnrollRequest, UUID userId);
     @Transactional
-    CustomerListResponse getListCustomer(UUID centerId, UUID userId);
+    CustomerListResponse getListCustomer(UUID centerId, UUID userId, int page, int count, String sortBy, String keyword, Boolean orderByDesc);
 }

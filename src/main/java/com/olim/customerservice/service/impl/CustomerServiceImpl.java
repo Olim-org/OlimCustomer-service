@@ -13,6 +13,10 @@ import com.olim.customerservice.repository.InstructorRepository;
 import com.olim.customerservice.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,7 +65,14 @@ public class CustomerServiceImpl implements CustomerService {
     }
     @Transactional
     @Override
-    public CustomerListResponse getListCustomer(UUID centerId, UUID userId) {
+    public CustomerListResponse getListCustomer(
+            UUID centerId,
+            UUID userId,
+            int page,
+            int count,
+            String sortBy,
+            String keyword,
+            Boolean orderByDesc) {
         Optional<Center> center = this.centerRepository.findById(centerId);
         if (!center.isPresent()) {
             throw new DataNotFoundException("해당 ID의 센터가 존재하지 않습니다.");
@@ -69,8 +80,15 @@ public class CustomerServiceImpl implements CustomerService {
         if (!center.get().getOwner().equals(userId)) {
             throw new PermissionFailException("회원을 조회할 권한이 없습니다.");
         }
-        List<Customer> customers = this.customerRepository.findAllByCenter(center.get());
-        CustomerListResponse customerListResponse = CustomerListResponse.makeDto(customers);
+        if (!(sortBy.equals("name") || sortBy.equals("cAt"))) {
+            sortBy = "name";
+        }
+        Sort sort = (orderByDesc) ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, count, sort);
+
+        Page<Customer> customers = this.customerRepository.findAllByCenterAndNameStartingWith(center.get(), keyword, pageable);
+        CustomerListResponse customerListResponse = CustomerListResponse.makeDto(customers.getContent());
         return customerListResponse;
     }
 }

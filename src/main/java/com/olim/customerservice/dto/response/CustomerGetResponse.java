@@ -25,7 +25,7 @@ public record CustomerGetResponse(
                 customer.getBirthDate().format(DateTimeFormatter.ISO_DATE),
                 customer.getPhoneNumber(),
                 customer.getAddress(),
-                customer.getInstructor().getId()
+                customer.getInstructor() != null ? customer.getInstructor().getId() : null
         );
         return response;
     }
