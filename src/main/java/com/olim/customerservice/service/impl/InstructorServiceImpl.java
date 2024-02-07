@@ -39,7 +39,7 @@ public class InstructorServiceImpl implements InstructorService {
         if (!center.isPresent()) {
             throw new DataNotFoundException("해당 센터를 찾을 수 없습니다.");
         }
-        if (center.get().getOwner().equals(userId)) {
+        if (!center.get().getOwner().equals(userId)) {
             throw new PermissionFailException("센터 점주가 아닙니다.");
         }
         Optional<Customer> customer = this.customerRepository.findByCenterAndId(center.get(), instructorCreateRequest.userId());
