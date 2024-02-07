@@ -14,6 +14,7 @@ public class Instructor extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private Long centerInstructorId;
     private UUID userId;
     private String name;
     @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL)
@@ -23,14 +24,20 @@ public class Instructor extends BaseEntity {
     @ToString.Exclude
     @JoinColumn(name = "CENTER_ID")
     private Center center;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @ToString.Exclude
+    @JoinColumn(name = "CUSTOMER_ID")
+    private Customer myCustomer;
     @Builder
     public Instructor(
-            UUID userId,
-            String name,
-            Center center
+            Long centerInstructorId,
+            Center center,
+            Customer customer
     ) {
-        this.userId = userId;
-        this.name = name;
+        this.centerInstructorId = centerInstructorId;
         this.center = center;
+        this.myCustomer = customer;
+        this.name = customer.getName();
     }
 }
