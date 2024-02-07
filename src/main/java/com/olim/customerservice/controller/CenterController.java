@@ -2,6 +2,7 @@ package com.olim.customerservice.controller;
 
 import com.olim.customerservice.dto.request.CenterCreateRequest;
 import com.olim.customerservice.dto.response.CenterCreateResponse;
+import com.olim.customerservice.dto.response.CenterGetListResponse;
 import com.olim.customerservice.dto.response.CenterGetResponse;
 import com.olim.customerservice.service.CenterService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,8 +42,8 @@ public class CenterController {
     @Parameters({
             @Parameter(name = "userId", description = "액세스 토큰 아이디", required = true, in = ParameterIn.HEADER)
     })
-    public ResponseEntity<CenterGetResponse> getMyCenter(
+    public ResponseEntity<CenterGetListResponse> getMyCenterList(
             @RequestHeader("id") String userId) {
-        return new ResponseEntity<>(this.centerService.getMyCenter(UUID.fromString(userId)), HttpStatus.OK);
+        return new ResponseEntity<>(this.centerService.getMyCenterList(UUID.fromString(userId)), HttpStatus.OK);
     }
 }
