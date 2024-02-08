@@ -13,18 +13,22 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Customer extends BaseEntity {
+    // 올림 uid
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CUSTOMER_ID")
     private Long id;
+    // 센터 uid
     private Long centerCustomerId;
     private UUID userId;
+    // 고객 개인 정보
     private String name;
     @Enumerated(value = EnumType.STRING)
     private Gender gender;
     private LocalDate birthDate;
     private String phoneNumber;
     private String address;
+    private UUID owner;
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     @ToString.Exclude
@@ -36,8 +40,6 @@ public class Customer extends BaseEntity {
     @JoinColumn(name = "CENTER_ID")
     private Center center;
 
-    @OneToOne(mappedBy = "myCustomer", cascade = CascadeType.ALL)
-    private Instructor myInstructor;
     private CustomerRole role;
     // 고객 추가 기입 정보
 
@@ -50,7 +52,8 @@ public class Customer extends BaseEntity {
             String phoneNumber,
             String address,
             Center center,
-            Instructor instructor
+            Instructor instructor,
+            UUID owner
     ) {
         this.centerCustomerId = centerCustomerId;
         this.name = name;
@@ -61,6 +64,7 @@ public class Customer extends BaseEntity {
         this.role = CustomerRole.CUSTOMER_USER;
         this.center = center;
         this.instructor = instructor;
+        this.owner = owner;
     }
     public void updateRole(CustomerRole role) {
         this.role = role;
