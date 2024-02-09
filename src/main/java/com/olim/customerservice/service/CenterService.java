@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public interface CenterService {
     @Transactional
-    CenterCreateResponse createCenter(CenterCreateRequest centerCreateRequest, UUID userId);
+    CenterCreateResponse createCenter(CenterCreateRequest centerCreateRequest, UUID userId, String token);
     @Transactional
     CenterGetListResponse getMyCenterList(UUID userId);
 }

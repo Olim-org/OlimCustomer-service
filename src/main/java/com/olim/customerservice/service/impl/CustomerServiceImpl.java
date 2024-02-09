@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -51,7 +52,6 @@ public class CustomerServiceImpl implements CustomerService {
             }
             gotInstructor = instructor.get();
         }
-
         Customer customer = Customer.builder()
                 .name(customerEnrollRequest.name())
                 .gender(customerEnrollRequest.gender())
@@ -60,6 +60,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .center(center.get())
                 .phoneNumber(customerEnrollRequest.phoneNumber())
                 .centerCustomerId(getLastCustomerNumber(center.get()) + 1)
+                .owner(userId)
                 .instructor(gotInstructor).build();
         Customer savedCustomer = this.customerRepository.save(customer);
         return "성공적으로 " + customerEnrollRequest.name() +" 회원이 등록 되었습니다.";
@@ -74,28 +75,48 @@ public class CustomerServiceImpl implements CustomerService {
             String sortBy,
             String keyword,
             Boolean orderByDesc) {
-        Optional<Center> center = this.centerRepository.findById(centerId);
-        if (!center.isPresent()) {
-            throw new DataNotFoundException("해당 ID의 센터가 존재하지 않습니다.");
+        if (centerId != null) {
+            Optional<Center> center = this.centerRepository.findById(centerId);
+            if (!center.isPresent()) {
+                throw new DataNotFoundException("해당 ID의 센터가 존재하지 않습니다.");
+            }
+
+            if (!center.get().getOwner().equals(userId)) {
+                throw new PermissionFailException("회원을 조회할 권한이 없습니다.");
+            }
+            if (!(sortBy.equals("name") || sortBy.equals("cAt"))) {
+                sortBy = "name";
+            }
+            Sort sort = (orderByDesc) ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+
+            Pageable pageable = PageRequest.of(page, count, sort);
+
+            Page<Customer> customers = this.customerRepository.findAllByCenterAndRoleAndNameContaining(center.get(), CustomerRole.CUSTOMER_USER, keyword, pageable);
+            CustomerListResponse customerListResponse = CustomerListResponse.makeDto(customers.getContent());
+            return customerListResponse;
+        } else {
+            List<Center> centers = this.centerRepository.findAllByOwner(userId);
+            if (centers.isEmpty()) {
+                throw new DataNotFoundException("해당 유저의 센터가 존재하지 않습니다.");
+            }
+            if (!(sortBy.equals("name") || sortBy.equals("cAt"))) {
+                sortBy = "name";
+            }
+            Sort sort = (orderByDesc) ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+
+            Pageable pageable = PageRequest.of(page, count, sort);
+
+            Page<Customer> customers = this.customerRepository.findAllByOwnerAndRoleAndNameContaining(userId, CustomerRole.CUSTOMER_USER, keyword, pageable);
+
+            CustomerListResponse customerListResponse = CustomerListResponse.makeDto(customers.getContent());
+            return customerListResponse;
         }
-
-        if (!center.get().getOwner().equals(userId)) {
-            throw new PermissionFailException("회원을 조회할 권한이 없습니다.");
-        }
-        if (!(sortBy.equals("name") || sortBy.equals("cAt"))) {
-            sortBy = "name";
-        }
-        Sort sort = (orderByDesc) ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
-
-        Pageable pageable = PageRequest.of(page, count, sort);
-
-        Page<Customer> customers = this.customerRepository.findAllByCenterAndRoleAndNameStartingWith(center.get(), CustomerRole.CUSTOMER_USER, keyword, pageable);
-        CustomerListResponse customerListResponse = CustomerListResponse.makeDto(customers.getContent());
-
-        return customerListResponse;
     }
     private Long getLastCustomerNumber(Center center) {
         Customer customer = customerRepository.findTopByCenterOrderByCenterCustomerIdDesc(center);
+        if (customer == null) {
+            return Long.parseLong("0");
+        }
         return customer.getCenterCustomerId();
     }
 }

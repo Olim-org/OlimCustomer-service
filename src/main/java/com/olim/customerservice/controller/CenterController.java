@@ -30,12 +30,15 @@ public class CenterController {
     @PostMapping("/create")
     @Operation(description = "센터 생성하기")
     @Parameters({
-            @Parameter(name = "userId", description = "액세스 토큰 아이디", required = true, in = ParameterIn.HEADER)
+            @Parameter(name = "userId", description = "액세스 토큰 아이디", required = true, in = ParameterIn.HEADER),
+            @Parameter(name = "token", description = "액세스 토큰", required = true, in = ParameterIn.HEADER)
     })
     public ResponseEntity<CenterCreateResponse> createCenter(
             @RequestBody CenterCreateRequest centerCreateRequest,
-            @RequestHeader("id") String userId) {
-        return new ResponseEntity<>(this.centerService.createCenter(centerCreateRequest, UUID.fromString(userId)), HttpStatus.OK);
+            @RequestHeader("id") String userId,
+            @RequestHeader("Authorization") String token
+    ) {
+        return new ResponseEntity<>(this.centerService.createCenter(centerCreateRequest, UUID.fromString(userId), token), HttpStatus.OK);
     }
     @GetMapping("/my")
     @Operation(description = "나의 센터 아이디, 이름 가져오기")

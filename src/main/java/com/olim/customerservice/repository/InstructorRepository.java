@@ -14,7 +14,6 @@ import java.util.Optional;
 
 @Repository
 public interface InstructorRepository extends JpaRepository<Instructor, Long> {
-    Page<Instructor> findAllByCenterAndNameStartingWith(Center center, String name, Pageable pageable);
+    Page<Instructor> findAllByCenterAndNameContaining(Center center, String name, Pageable pageable);
     Instructor findTopByCenterOrderByCenterInstructorIdDesc(Center center);
-    Optional<Instructor> findByCenterAndMyCustomer(Center center, Customer myCustomer);
 }
