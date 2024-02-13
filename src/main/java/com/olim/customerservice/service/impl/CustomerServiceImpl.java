@@ -122,7 +122,7 @@ public class CustomerServiceImpl implements CustomerService {
             throw new DataNotFoundException("해당 아이디의 유저를 찾을 수 없습니다.");
         }
         if (!customer.get().getOwner().equals(userId)) {
-            throw new PermissionFailException("해당 아이디의 유저 프로필을 등록할 권한이 없습니다.");
+            throw new PermissionFailException("해당 아이디의 고객 프로필을 등록할 권한이 없습니다.");
         }
         Customer gotCustomer = customer.get();
         gotCustomer.updateProfile(customerPutProfileRequest);
@@ -137,11 +137,10 @@ public class CustomerServiceImpl implements CustomerService {
             throw new DataNotFoundException("해당 아이디의 유저를 찾을 수 없습니다.");
         }
         if (!customer.get().getOwner().equals(userId)) {
-            throw new PermissionFailException("해당 아이디의 유저 프로필을 등록할 권한이 없습니다.");
+            throw new PermissionFailException("해당 아이디의 고객 프로필을 조회할 권한이 없습니다.");
         }
         Customer gotCustomer = customer.get();
         CustomerGetResponse customerGetResponse = CustomerGetResponse.makeDto(gotCustomer);
-
         return customerGetResponse;
     }
 
