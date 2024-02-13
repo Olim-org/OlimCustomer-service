@@ -1,12 +1,15 @@
 package com.olim.customerservice.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.olim.customerservice.dto.request.CustomerPutProfileRequest;
 import com.olim.customerservice.enumeration.CustomerRole;
 import com.olim.customerservice.enumeration.Gender;
+import com.olim.customerservice.enumeration.VisitRoute;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -42,7 +45,14 @@ public class Customer extends BaseEntity {
 
     private CustomerRole role;
     // 고객 추가 기입 정보
-
+    private List<VisitRoute> visitRoute;
+    private String healthExp;
+    private String purpose;
+    private String diseases;
+    private String pregnant;
+    private String lifeHabit;
+    private String desiredTimeSlot;
+    private Boolean kakaoTalkAlert;
     @Builder
     public Customer(
             Long centerCustomerId,
@@ -68,5 +78,15 @@ public class Customer extends BaseEntity {
     }
     public void updateRole(CustomerRole role) {
         this.role = role;
+    }
+    public void updateProfile(CustomerPutProfileRequest customerPutProfileRequest) {
+        this.visitRoute = customerPutProfileRequest.visitRoute();
+        this.healthExp = customerPutProfileRequest.healthExp();
+        this.purpose = customerPutProfileRequest.purpose();
+        this.diseases = customerPutProfileRequest.diseases();
+        this.pregnant = customerPutProfileRequest.pregnant();
+        this.lifeHabit = customerPutProfileRequest.lifeHabit();
+        this.desiredTimeSlot = customerPutProfileRequest.desiredTimeSlot();
+        this.kakaoTalkAlert = customerPutProfileRequest.kakaoTalkAlert();
     }
 }
