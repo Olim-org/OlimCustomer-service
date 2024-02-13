@@ -2,6 +2,7 @@ package com.olim.customerservice.service.impl;
 
 import com.olim.customerservice.dto.request.CustomerEnrollRequest;
 import com.olim.customerservice.dto.request.CustomerPutProfileRequest;
+import com.olim.customerservice.dto.response.CustomerGetResponse;
 import com.olim.customerservice.dto.response.CustomerListResponse;
 import com.olim.customerservice.entity.Center;
 import com.olim.customerservice.entity.Customer;
@@ -127,6 +128,21 @@ public class CustomerServiceImpl implements CustomerService {
         gotCustomer.updateProfile(customerPutProfileRequest);
         this.customerRepository.save(gotCustomer);
         return "성공적으로 " + gotCustomer.getName() + "님의 프로필이 수정 되었습니다.";
+    }
+    @Transactional
+    @Override
+    public CustomerGetResponse getCustomerProfile(Long customerId, UUID userId) {
+        Optional<Customer> customer = this.customerRepository.findById(customerId);
+        if (!customer.isPresent()) {
+            throw new DataNotFoundException("해당 아이디의 유저를 찾을 수 없습니다.");
+        }
+        if (!customer.get().getOwner().equals(userId)) {
+            throw new PermissionFailException("해당 아이디의 유저 프로필을 등록할 권한이 없습니다.");
+        }
+        Customer gotCustomer = customer.get();
+        CustomerGetResponse customerGetResponse = CustomerGetResponse.makeDto(gotCustomer);
+
+        return customerGetResponse;
     }
 
     private Long getLastCustomerNumber(Center center) {

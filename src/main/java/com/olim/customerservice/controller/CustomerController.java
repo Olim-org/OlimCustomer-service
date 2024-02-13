@@ -2,6 +2,7 @@ package com.olim.customerservice.controller;
 
 import com.olim.customerservice.dto.request.CustomerEnrollRequest;
 import com.olim.customerservice.dto.request.CustomerPutProfileRequest;
+import com.olim.customerservice.dto.response.CustomerGetResponse;
 import com.olim.customerservice.dto.response.CustomerListResponse;
 import com.olim.customerservice.service.CustomerService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -68,6 +69,18 @@ public class CustomerController {
             @RequestBody CustomerPutProfileRequest customerPutProfileRequest
     ) {
         return new ResponseEntity<>(this.customerService.putCustomerProfile(customerId, UUID.fromString(userId), customerPutProfileRequest), HttpStatus.OK);
+    }
+    @GetMapping("/profile/{customerId}")
+    @Operation(description = "센터 내 고객의 프로필 조회 (추가 정보 기입)")
+    @Parameters({
+            @Parameter(name = "customerId", description = "프로필을 등록할 고객의 id", in = ParameterIn.PATH, example = "5"),
+            @Parameter(name = "userId", description = "액세스 토큰 아이디", in = ParameterIn.HEADER)
+    })
+    public ResponseEntity<CustomerGetResponse> getCustomerProfile(
+            @PathVariable Long customerId,
+            @RequestHeader("id") String userId
+    ) {
+        return new ResponseEntity<>(this.customerService.getCustomerProfile(customerId, UUID.fromString(userId)), HttpStatus.OK);
     }
 
 }
