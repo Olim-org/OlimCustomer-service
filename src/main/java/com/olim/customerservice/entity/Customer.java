@@ -46,6 +46,7 @@ public class Customer extends BaseEntity {
 
     private CustomerRole role;
     // 고객 추가 기입 정보
+    @Enumerated(value = EnumType.STRING)
     private List<VisitRoute> visitRoute;
     private String healthExp;
     private String purpose;
