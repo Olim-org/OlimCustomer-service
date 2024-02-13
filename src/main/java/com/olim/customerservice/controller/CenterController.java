@@ -3,7 +3,7 @@ package com.olim.customerservice.controller;
 import com.olim.customerservice.dto.request.CenterCreateRequest;
 import com.olim.customerservice.dto.response.CenterCreateResponse;
 import com.olim.customerservice.dto.response.CenterGetListResponse;
-import com.olim.customerservice.dto.response.CenterGetResponse;
+import com.olim.customerservice.dto.response.CenterFeignResponse;
 import com.olim.customerservice.service.CenterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -48,5 +48,10 @@ public class CenterController {
     public ResponseEntity<CenterGetListResponse> getMyCenterList(
             @RequestHeader("id") String userId) {
         return new ResponseEntity<>(this.centerService.getMyCenterList(UUID.fromString(userId)), HttpStatus.OK);
+    }
+    @Operation(description = "센터 정보 가져오기 Feign 클라이언트 용")
+    @GetMapping("/info")
+    public CenterFeignResponse getCenterInfo(@RequestHeader("id") String userId, String centerId) {
+        return this.centerService.getCenterInfo(UUID.fromString(userId), UUID.fromString(centerId));
     }
 }

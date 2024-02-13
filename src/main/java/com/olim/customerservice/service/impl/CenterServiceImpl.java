@@ -4,31 +4,24 @@ import com.olim.customerservice.clients.UserClient;
 import com.olim.customerservice.dto.request.CenterCreateRequest;
 import com.olim.customerservice.dto.response.CenterCreateResponse;
 import com.olim.customerservice.dto.response.CenterGetListResponse;
+import com.olim.customerservice.dto.response.CenterFeignResponse;
 import com.olim.customerservice.dto.response.UserInfoFeignResponse;
 import com.olim.customerservice.entity.Center;
-import com.olim.customerservice.entity.Customer;
 import com.olim.customerservice.entity.Instructor;
-import com.olim.customerservice.enumeration.CustomerRole;
-import com.olim.customerservice.enumeration.Gender;
 import com.olim.customerservice.exception.customexception.DataNotFoundException;
-import com.olim.customerservice.exception.customexception.DuplicateException;
 import com.olim.customerservice.exception.customexception.PermissionFailException;
 import com.olim.customerservice.repository.CenterRepository;
 import com.olim.customerservice.repository.CustomerRepository;
 import com.olim.customerservice.repository.InstructorRepository;
 import com.olim.customerservice.service.CenterService;
-import com.olim.customerservice.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -73,5 +66,17 @@ public class CenterServiceImpl implements CenterService {
         }
         CenterGetListResponse centerGetListResponse = CenterGetListResponse.makeDto(centers);
         return centerGetListResponse;
+    }
+    @Override
+    public CenterFeignResponse getCenterInfo(UUID userId, UUID centerId) {
+        Optional<Center> center = centerRepository.findById(centerId);
+        if (!center.isPresent()) {
+            throw new DataNotFoundException("해당 센터를 찾을 수 없습니다.");
+        }
+        if (!center.get().getOwner().equals(userId)) {
+            throw new PermissionFailException("해당 센터를 조회할 권한이 없습니다.");
+        }
+        CenterFeignResponse centerFeignResponse = CenterFeignResponse.makeDto(center.get());
+        return centerFeignResponse;
     }
 }
