@@ -3,9 +3,11 @@ package com.olim.customerservice.dto.response;
 import com.olim.customerservice.entity.Center;
 import com.olim.customerservice.entity.Customer;
 import com.olim.customerservice.enumeration.Gender;
+import com.olim.customerservice.enumeration.VisitRoute;
 
 import javax.swing.text.DateFormatter;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.UUID;
 
 public record CustomerGetResponse(
@@ -18,7 +20,15 @@ public record CustomerGetResponse(
         String phoneNumber,
         String address,
         Long instructorId,
-        String instructorName
+        String instructorName,
+        List<VisitRoute> visitRoute,
+        String healthExp,
+        String purpose,
+        String diseases,
+        String pregnant,
+        String lifeHabit,
+        String desiredTimeSlot,
+        Boolean kakaoTalkAlert
 
 ) {
     public static CustomerGetResponse makeDto(Customer customer) {
@@ -32,7 +42,15 @@ public record CustomerGetResponse(
                 customer.getPhoneNumber(),
                 customer.getAddress(),
                 customer.getInstructor() != null ? customer.getInstructor().getId() : null,
-                customer.getInstructor() != null ? customer.getInstructor().getName() : null
+                customer.getInstructor() != null ? customer.getInstructor().getName() : null,
+                customer.getVisitRoute(),
+                customer.getHealthExp(),
+                customer.getPurpose(),
+                customer.getDiseases(),
+                customer.getPregnant(),
+                customer.getLifeHabit(),
+                customer.getDesiredTimeSlot(),
+                customer.getKakaoTalkAlert()
         );
         return response;
     }

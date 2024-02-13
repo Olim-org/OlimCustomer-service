@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
@@ -80,6 +81,11 @@ public class Customer extends BaseEntity {
         this.role = role;
     }
     public void updateProfile(CustomerPutProfileRequest customerPutProfileRequest) {
+        this.name = customerPutProfileRequest.name();
+        this.gender = customerPutProfileRequest.gender();
+        this.phoneNumber = customerPutProfileRequest.phoneNumber();
+        this.birthDate = LocalDate.parse(customerPutProfileRequest.birthDate(), DateTimeFormatter.ISO_DATE);
+        this.address = customerPutProfileRequest.address();
         this.visitRoute = customerPutProfileRequest.visitRoute();
         this.healthExp = customerPutProfileRequest.healthExp();
         this.purpose = customerPutProfileRequest.purpose();
