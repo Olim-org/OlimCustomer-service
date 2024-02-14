@@ -81,7 +81,7 @@ public class Customer extends BaseEntity {
     public void updateRole(CustomerRole role) {
         this.role = role;
     }
-    public void updateProfile(CustomerPutProfileRequest customerPutProfileRequest) {
+    public void updateProfile(CustomerPutProfileRequest customerPutProfileRequest, Instructor instructor) {
         this.name = customerPutProfileRequest.name();
         this.gender = customerPutProfileRequest.gender();
         this.phoneNumber = customerPutProfileRequest.phoneNumber();
@@ -95,5 +95,6 @@ public class Customer extends BaseEntity {
         this.lifeHabit = customerPutProfileRequest.lifeHabit();
         this.desiredTimeSlot = customerPutProfileRequest.desiredTimeSlot();
         this.kakaoTalkAlert = customerPutProfileRequest.kakaoTalkAlert();
+        this.instructor = instructor;
     }
 }
