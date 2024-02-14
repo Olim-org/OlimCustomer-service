@@ -1,5 +1,6 @@
 package com.olim.customerservice.entity;
 
+import com.olim.customerservice.dto.request.CenterModifyRequest;
 import com.olim.customerservice.enumeration.CenterStatus;
 import com.olim.customerservice.service.CenterService;
 import com.olim.customerservice.service.CustomerService;
@@ -41,5 +42,10 @@ public class Center extends BaseEntity {
     }
     public void deleteCenter() {
         this.status = CenterStatus.DELETE;
+    }
+    public void updateCenter(
+            CenterModifyRequest centerModifyRequest
+    ) {
+        this.name = centerModifyRequest.name();
     }
 }

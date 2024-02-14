@@ -1,6 +1,7 @@
 package com.olim.customerservice.controller;
 
 import com.olim.customerservice.dto.request.CenterCreateRequest;
+import com.olim.customerservice.dto.request.CenterModifyRequest;
 import com.olim.customerservice.dto.response.CenterCreateResponse;
 import com.olim.customerservice.dto.response.CenterGetListResponse;
 import com.olim.customerservice.dto.response.CenterFeignResponse;
@@ -48,6 +49,19 @@ public class CenterController {
     public ResponseEntity<CenterGetListResponse> getMyCenterList(
             @RequestHeader("id") String userId) {
         return new ResponseEntity<>(this.centerService.getMyCenterList(UUID.fromString(userId)), HttpStatus.OK);
+    }
+    @PutMapping("/{centerId}")
+    @Operation(description = "센터 수정하기")
+    @Parameters({
+            @Parameter(name = "userId", description = "액세스 토큰 아이디", required = true, in = ParameterIn.HEADER),
+            @Parameter(name = "centerId", description = "센터 UUID", required = true, in = ParameterIn.PATH)
+    })
+    public ResponseEntity<String> updateCenter(
+            @RequestHeader("id") String userId,
+            @PathVariable String centerId,
+            @RequestBody CenterModifyRequest centerModifyRequest
+            ) {
+        return new ResponseEntity<>(this.centerService.updateCenter(UUID.fromString(userId), UUID.fromString(centerId), centerModifyRequest), HttpStatus.OK);
     }
     @DeleteMapping("/{centerId}")
     @Operation(description = "센터 삭제하기")

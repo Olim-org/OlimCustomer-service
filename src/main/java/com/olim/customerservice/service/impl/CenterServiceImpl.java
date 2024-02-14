@@ -2,6 +2,7 @@ package com.olim.customerservice.service.impl;
 
 import com.olim.customerservice.clients.UserClient;
 import com.olim.customerservice.dto.request.CenterCreateRequest;
+import com.olim.customerservice.dto.request.CenterModifyRequest;
 import com.olim.customerservice.dto.response.CenterCreateResponse;
 import com.olim.customerservice.dto.response.CenterGetListResponse;
 import com.olim.customerservice.dto.response.CenterFeignResponse;
@@ -68,6 +69,21 @@ public class CenterServiceImpl implements CenterService {
         CenterGetListResponse centerGetListResponse = CenterGetListResponse.makeDto(centers);
         return centerGetListResponse;
     }
+    @Transactional
+    @Override
+    public String updateCenter(UUID userId, UUID centerId, CenterModifyRequest centerModifyRequest) {
+        Optional<Center> center = centerRepository.findById(centerId);
+        if (!center.isPresent()) {
+            throw new DataNotFoundException("해당 아이디의 센터를 찾을 수 없습니다.");
+        }
+        if (!center.get().getOwner().equals(userId) || center.get().getStatus() == CenterStatus.DELETE) {
+            throw new PermissionFailException("해당 센터를 수정할 권한이 없습니다.");
+        }
+        Center gotCenter = center.get();
+        gotCenter.updateCenter(centerModifyRequest);
+        centerRepository.save(gotCenter);
+        return "성공적으로 " + gotCenter.getName() + " 센터가 수정 되었습니다.";
+    }
 
     @Override
     public String deleteCenter(UUID userId, UUID centerId) {
@@ -75,8 +91,8 @@ public class CenterServiceImpl implements CenterService {
         if (!center.isPresent()) {
             throw new DataNotFoundException("해당 아이디의 센터를 찾을 수 없습니다.");
         }
-        if (!center.get().getOwner().equals(userId)) {
-            throw new PermissionFailException("해당 센터를 삭제할 권한이 없습니다.");
+        if (!center.get().getOwner().equals(userId) || center.get().getStatus() == CenterStatus.DELETE) {
+            throw new PermissionFailException("해당 센터가 이미 삭제 되었거나 삭제할 권한이 없습니다.");
         }
         Center gotCenter = center.get();
         gotCenter.deleteCenter();
