@@ -77,7 +77,7 @@ public class CenterController {
     }
     @Operation(description = "센터 정보 가져오기 Feign 클라이언트 용")
     @GetMapping("/info")
-    public CenterFeignResponse getCenterInfo(@RequestHeader("id") String userId, String centerId) {
+    public CenterFeignResponse getCenterInfo(@RequestHeader("id") String userId, @RequestParam(value = "centerId") String centerId) {
         return this.centerService.getCenterInfo(UUID.fromString(userId), UUID.fromString(centerId));
     }
 }
