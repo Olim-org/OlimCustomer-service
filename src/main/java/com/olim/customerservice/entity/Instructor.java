@@ -1,11 +1,15 @@
 package com.olim.customerservice.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.olim.customerservice.dto.request.InstructorModifyRequest;
 import com.olim.customerservice.enumeration.Gender;
+import com.olim.customerservice.enumeration.InstructorStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,6 +32,7 @@ public class Instructor extends BaseEntity {
     private String phoneNumber;
     private String address;
     private UUID owner;
+    private InstructorStatus status;
     @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL)
     private List<Customer> customers;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -54,5 +59,19 @@ public class Instructor extends BaseEntity {
         this.address = address;
         this.center = center;
         this.owner = owner;
+        this.status = InstructorStatus.INACTIVE;
+        this.customers = new ArrayList<>();
+    }
+    public void updateInstructor(
+            InstructorModifyRequest instructorModifyRequest
+    ) {
+        this.name = instructorModifyRequest.name();
+        this.gender = instructorModifyRequest.gender();
+        this.status = instructorModifyRequest.status() != InstructorStatus.DELETE ? instructorModifyRequest.status() : InstructorStatus.INACTIVE;
+        this.birthDate = LocalDate.parse(instructorModifyRequest.birthDate(), DateTimeFormatter.ISO_DATE);
+        this.address = instructorModifyRequest.address();
+    }
+    public void deleteInstructor() {
+        this.status = InstructorStatus.DELETE;
     }
 }

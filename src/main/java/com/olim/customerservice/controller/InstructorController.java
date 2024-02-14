@@ -1,6 +1,7 @@
 package com.olim.customerservice.controller;
 
 import com.olim.customerservice.dto.request.InstructorCreateRequest;
+import com.olim.customerservice.dto.request.InstructorModifyRequest;
 import com.olim.customerservice.dto.response.InstructorGetListByCenterResponse;
 import com.olim.customerservice.service.InstructorService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,5 +54,30 @@ public class InstructorController {
             @RequestHeader("id") String userId
     ) {
         return new ResponseEntity<>(this.instructorService.getInstructorListByCenter(centerId, UUID.fromString(userId), keyword, page, count), HttpStatus.OK);
+    }
+    @PutMapping("/{instructorId}")
+    @Operation(description = "센터 강사 수정 하기")
+    @Parameters({
+            @Parameter(name = "userId", description = "액세스 토큰 아이디", required = true, in = ParameterIn.HEADER),
+            @Parameter(name = "instructorId", description = "강사 UID", required = true, in = ParameterIn.PATH)
+    })
+    public ResponseEntity<String> updateInstructor(
+            @RequestHeader("id") String userId,
+            @PathVariable Long instructorId,
+            @RequestBody InstructorModifyRequest instructorModifyRequest
+            ) {
+        return new ResponseEntity<>(this.instructorService.updateInstructor(UUID.fromString(userId), instructorId, instructorModifyRequest), HttpStatus.OK);
+    }
+    @DeleteMapping("/{instructorId}")
+    @Operation(description = "강사 삭제하기")
+    @Parameters({
+            @Parameter(name = "userId", description = "액세스 토큰 아이디", required = true, in = ParameterIn.HEADER),
+            @Parameter(name = "instructorId", description = "강사 UID", required = true, in = ParameterIn.PATH)
+    })
+    public ResponseEntity<String> deleteCenter(
+            @RequestHeader("id") String userId,
+            @PathVariable Long instructorId
+    ) {
+        return new ResponseEntity<>(this.instructorService.deleteInstructor(UUID.fromString(userId), instructorId), HttpStatus.OK);
     }
 }

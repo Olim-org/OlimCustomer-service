@@ -1,12 +1,14 @@
 package com.olim.customerservice.service.impl;
 
 import com.olim.customerservice.dto.request.InstructorCreateRequest;
+import com.olim.customerservice.dto.request.InstructorModifyRequest;
 import com.olim.customerservice.dto.response.InstructorGetListByCenterResponse;
 import com.olim.customerservice.entity.Center;
 import com.olim.customerservice.entity.Customer;
 import com.olim.customerservice.entity.Instructor;
 import com.olim.customerservice.enumeration.CenterStatus;
 import com.olim.customerservice.enumeration.CustomerRole;
+import com.olim.customerservice.enumeration.InstructorStatus;
 import com.olim.customerservice.exception.customexception.DataNotFoundException;
 import com.olim.customerservice.exception.customexception.DuplicateException;
 import com.olim.customerservice.exception.customexception.PermissionFailException;
@@ -97,6 +99,43 @@ public class InstructorServiceImpl implements InstructorService {
         }
 
     }
+    @Transactional
+    @Override
+    public String updateInstructor(UUID userId, Long instructorId, InstructorModifyRequest instructorModifyRequest) {
+        if (instructorId == null) {
+            throw new DataNotFoundException("해당 아이디의 강사를 찾을 수 없습니다.");
+        }
+        Optional<Instructor> instructor = instructorRepository.findById(instructorId);
+        if (!instructor.isPresent()) {
+            throw new DataNotFoundException("해당 아이디의 강사를 찾을 수 없습니다.");
+        }
+        if (!instructor.get().getOwner().equals(userId)) {
+            throw new PermissionFailException("해당 강사를 수정할 수 있는 권한이 없습니다.");
+        }
+        Instructor gotInstructor = instructor.get();
+        gotInstructor.updateInstructor(instructorModifyRequest);
+        instructorRepository.save(gotInstructor);
+        return "성공적으로 강사 " + gotInstructor.getName() + "님의 정보가 수정 되었습니다.";
+    }
+
+    @Override
+    public String deleteInstructor(UUID userId, Long instructorId) {
+        if (instructorId == null) {
+            throw new DataNotFoundException("해당 아이디의 강사를 찾을 수 없습니다.");
+        }
+        Optional<Instructor> instructor = instructorRepository.findById(instructorId);
+        if (!instructor.isPresent()) {
+            throw new DataNotFoundException("해당 아이디의 강사를 찾을 수 없습니다.");
+        }
+        if (!instructor.get().getOwner().equals(userId) || instructor.get().getStatus() == InstructorStatus.DELETE) {
+            throw new PermissionFailException("해당 강사가 이미 삭제 되었거나 삭제할 수 있는 권한이 없습니다.");
+        }
+        Instructor gotInstructor = instructor.get();
+        gotInstructor.deleteInstructor();
+        instructorRepository.save(gotInstructor);
+        return "성공적으로 강사 " + gotInstructor.getName() + "님이 해임 되었습니다.";
+    }
+
     private Long getLastInstructorNumber(Center center) {
         Instructor instructor = instructorRepository.findTopByCenterOrderByCenterInstructorIdDesc(center);
         if (instructor == null) {
