@@ -64,7 +64,8 @@ public class CenterServiceImpl implements CenterService {
     public CenterGetListResponse getMyCenterList(UUID userId) {
         List<Center> centers = this.centerRepository.findAllByOwnerAndStatusIsNot(userId, CenterStatus.DELETE);
         if (centers.size() == 0) {
-            throw new DataNotFoundException("해당 유저가 소유 중인 센터가 존재하지 않습니다");
+            CenterGetListResponse centerGetListResponse = CenterGetListResponse.makeDto(centers);
+            return centerGetListResponse;
         }
         CenterGetListResponse centerGetListResponse = CenterGetListResponse.makeDto(centers);
         return centerGetListResponse;
