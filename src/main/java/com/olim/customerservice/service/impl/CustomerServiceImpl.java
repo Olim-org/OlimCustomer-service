@@ -70,7 +70,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Transactional
     @Override
     public CustomerListResponse getListCustomer(
-            UUID centerId,
+            String centerId,
             UUID userId,
             int page,
             int count,
@@ -78,7 +78,8 @@ public class CustomerServiceImpl implements CustomerService {
             String keyword,
             Boolean orderByDesc) {
         if (centerId != null) {
-            Optional<Center> center = this.centerRepository.findById(centerId);
+            UUID centerUUID = UUID.fromString(centerId);
+            Optional<Center> center = this.centerRepository.findById(centerUUID);
             if (!center.isPresent()) {
                 throw new DataNotFoundException("해당 ID의 센터가 존재하지 않습니다.");
             }
@@ -94,7 +95,7 @@ public class CustomerServiceImpl implements CustomerService {
             Pageable pageable = PageRequest.of(page, count, sort);
 
             Page<Customer> customers = this.customerRepository.findAllByCenterAndRoleAndNameContaining(center.get(), CustomerRole.CUSTOMER_USER, keyword, pageable);
-            CustomerListResponse customerListResponse = CustomerListResponse.makeDto(customers.getContent());
+            CustomerListResponse customerListResponse = CustomerListResponse.makeDto(customers);
             return customerListResponse;
         } else {
             List<Center> centers = this.centerRepository.findAllByOwner(userId);
@@ -110,7 +111,7 @@ public class CustomerServiceImpl implements CustomerService {
 
             Page<Customer> customers = this.customerRepository.findAllByOwnerAndRoleAndNameContaining(userId, CustomerRole.CUSTOMER_USER, keyword, pageable);
 
-            CustomerListResponse customerListResponse = CustomerListResponse.makeDto(customers.getContent());
+            CustomerListResponse customerListResponse = CustomerListResponse.makeDto(customers);
             return customerListResponse;
         }
     }

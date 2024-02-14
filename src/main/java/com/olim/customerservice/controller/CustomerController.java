@@ -55,7 +55,7 @@ public class CustomerController {
             @RequestParam(value = "keyword", defaultValue = "") String keyword,
             @RequestParam(value = "orderByDesc", defaultValue = "true") Boolean orderByDesc
             ) {
-        return new ResponseEntity<>(this.customerService.getListCustomer(UUID.fromString(centerId), UUID.fromString(userId), page, count, sortBy, keyword, orderByDesc), HttpStatus.OK);
+        return new ResponseEntity<>(this.customerService.getListCustomer(centerId, UUID.fromString(userId), page, count, sortBy, keyword, orderByDesc), HttpStatus.OK);
     }
     @PutMapping("/profile/{customerId}")
     @Operation(description = "센터 내 고객의 프로필 등록 (추가 정보 기입)")

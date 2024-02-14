@@ -10,5 +10,5 @@ public interface InstructorService {
     @Transactional
     String createInstructor(UUID userId, InstructorCreateRequest instructorCreateRequest);
     @Transactional
-    InstructorGetListByCenterResponse getInstructorListByCenter(UUID centerId, UUID userId, String keyword, int page, int count);
+    InstructorGetListByCenterResponse getInstructorListByCenter(String centerId, UUID userId, String keyword, int page, int count);
 }

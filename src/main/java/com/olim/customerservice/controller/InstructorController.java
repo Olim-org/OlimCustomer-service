@@ -39,7 +39,7 @@ public class InstructorController {
     @GetMapping("/list")
     @Operation(description = "센터 강사 목록 가져오기")
     @Parameters({
-            @Parameter(name = "centerId", description = "센터 UUID", required = true, in = ParameterIn.QUERY, example = "asdf-qr-xcv-daf"),
+            @Parameter(name = "centerId", description = "센터 UUID", in = ParameterIn.QUERY, example = "asdf-qr-xcv-daf"),
             @Parameter(name = "userId", description = "액세스 토큰 아이디", required = true, in = ParameterIn.HEADER, example = "asdf-qr-xcv-daf"),
             @Parameter(name = "page", description = "페이지", in = ParameterIn.QUERY, required = false, example = "0"),
             @Parameter(name = "count", description = "페이지 내 아이템 수", in = ParameterIn.QUERY, required = false, example = "20"),
@@ -52,6 +52,6 @@ public class InstructorController {
             @RequestParam(value = "keyword", defaultValue = "") String keyword,
             @RequestHeader("id") String userId
     ) {
-        return new ResponseEntity<>(this.instructorService.getInstructorListByCenter(UUID.fromString(centerId), UUID.fromString(userId), keyword, page, count), HttpStatus.OK);
+        return new ResponseEntity<>(this.instructorService.getInstructorListByCenter(centerId, UUID.fromString(userId), keyword, page, count), HttpStatus.OK);
     }
 }

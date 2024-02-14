@@ -11,9 +11,11 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface InstructorRepository extends JpaRepository<Instructor, Long> {
     Page<Instructor> findAllByCenterAndNameContaining(Center center, String name, Pageable pageable);
     Instructor findTopByCenterOrderByCenterInstructorIdDesc(Center center);
+    Page<Instructor> findAllByOwnerAndNameContaining(UUID owner, String name, Pageable pageable);
 }

@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -61,22 +62,39 @@ public class InstructorServiceImpl implements InstructorService {
     }
     @Transactional
     @Override
-    public InstructorGetListByCenterResponse getInstructorListByCenter(UUID centerId, UUID userId, String keyword, int page, int count) {
-        Optional<Center> center = this.centerRepository.findById(centerId);
-        if (!center.isPresent()) {
-            throw new DataNotFoundException("해당 센터는 존재하지 않습니다.");
-        }
-        if (!center.get().getOwner().equals(userId)) {
-            throw new PermissionFailException("센터 점주가 아닙니다.");
-        }
-        Sort sort = Sort.by("name").ascending();
+    public InstructorGetListByCenterResponse getInstructorListByCenter(String centerId, UUID userId, String keyword, int page, int count) {
+        if (centerId != null) {
+            UUID centerUUID = UUID.fromString(centerId);
+            Optional<Center> center = this.centerRepository.findById(centerUUID);
+            if (!center.isPresent()) {
+                throw new DataNotFoundException("해당 센터는 존재하지 않습니다.");
+            }
+            if (!center.get().getOwner().equals(userId)) {
+                throw new PermissionFailException("센터 점주가 아닙니다.");
+            }
+            Sort sort = Sort.by("name").ascending();
 
-        Pageable pageable = PageRequest.of(page, count, sort);
+            Pageable pageable = PageRequest.of(page, count, sort);
 
-        Page<Instructor> instructors = this.instructorRepository.findAllByCenterAndNameContaining(center.get(), keyword, pageable);
-        InstructorGetListByCenterResponse instructorGetListByCenterResponse =
-                InstructorGetListByCenterResponse.makeDto(instructors.getContent());
-        return instructorGetListByCenterResponse;
+            Page<Instructor> instructors = this.instructorRepository.findAllByCenterAndNameContaining(center.get(), keyword, pageable);
+            InstructorGetListByCenterResponse instructorGetListByCenterResponse =
+                    InstructorGetListByCenterResponse.makeDto(instructors);
+            return instructorGetListByCenterResponse;
+        } else {
+            List<Center> centers = this.centerRepository.findAllByOwner(userId);
+            if (centers.isEmpty()) {
+                throw new DataNotFoundException("해당 유저의 센터가 존재하지 않습니다.");
+            }
+            Sort sort = Sort.by("name").ascending();
+
+            Pageable pageable = PageRequest.of(page, count, sort);
+            Page<Instructor> instructors = this.instructorRepository.findAllByOwnerAndNameContaining(userId, keyword, pageable);
+
+            InstructorGetListByCenterResponse instructorGetListByCenterResponse =
+                    InstructorGetListByCenterResponse.makeDto(instructors);
+            return instructorGetListByCenterResponse;
+        }
+
     }
     private Long getLastInstructorNumber(Center center) {
         Instructor instructor = instructorRepository.findTopByCenterOrderByCenterInstructorIdDesc(center);
