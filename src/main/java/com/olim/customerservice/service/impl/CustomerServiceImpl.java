@@ -129,14 +129,14 @@ public class CustomerServiceImpl implements CustomerService {
         Optional<Instructor> instructor = null;
         if (customerPutProfileRequest.instructorId() != null) {
             instructor = this.instructorRepository.findById(customerPutProfileRequest.instructorId());
+            if (!instructor.isPresent()) {
+                throw new DataNotFoundException("해당 아이디의 강사를 찾을 수 없습니다.");
+            }
+            if (!instructor.get().getOwner().equals(userId)) {
+                throw new DataNotFoundException("해당 강사는 해당 센터에 소속된 강사가 아닙니다.");
+            }
         }
-        if (!instructor.isPresent()) {
-            throw new DataNotFoundException("해당 아이디의 강사를 찾을 수 없습니다.");
-        }
-        if (!instructor.get().getOwner().equals(userId)) {
-            throw new DataNotFoundException("해당 강사는 해당 센터에 소속된 강사가 아닙니다.");
-        }
-        gotCustomer.updateProfile(customerPutProfileRequest, instructor.get());
+        gotCustomer.updateProfile(customerPutProfileRequest, instructor != null ? instructor.get() : null);
         this.customerRepository.save(gotCustomer);
         return "성공적으로 " + gotCustomer.getName() + "님의 프로필이 수정 되었습니다.";
     }
