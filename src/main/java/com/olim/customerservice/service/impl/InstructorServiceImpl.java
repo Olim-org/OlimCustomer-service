@@ -5,6 +5,7 @@ import com.olim.customerservice.dto.response.InstructorGetListByCenterResponse;
 import com.olim.customerservice.entity.Center;
 import com.olim.customerservice.entity.Customer;
 import com.olim.customerservice.entity.Instructor;
+import com.olim.customerservice.enumeration.CenterStatus;
 import com.olim.customerservice.enumeration.CustomerRole;
 import com.olim.customerservice.exception.customexception.DataNotFoundException;
 import com.olim.customerservice.exception.customexception.DuplicateException;
@@ -81,7 +82,7 @@ public class InstructorServiceImpl implements InstructorService {
                     InstructorGetListByCenterResponse.makeDto(instructors);
             return instructorGetListByCenterResponse;
         } else {
-            List<Center> centers = this.centerRepository.findAllByOwner(userId);
+            List<Center> centers = this.centerRepository.findAllByOwnerAndStatusIsNot(userId, CenterStatus.DELETE);
             if (centers.isEmpty()) {
                 throw new DataNotFoundException("해당 유저의 센터가 존재하지 않습니다.");
             }

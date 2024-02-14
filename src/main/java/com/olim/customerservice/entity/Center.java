@@ -1,5 +1,7 @@
 package com.olim.customerservice.entity;
 
+import com.olim.customerservice.enumeration.CenterStatus;
+import com.olim.customerservice.service.CenterService;
 import com.olim.customerservice.service.CustomerService;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -25,6 +27,7 @@ public class Center extends BaseEntity {
     @OneToMany(mappedBy = "center", cascade = CascadeType.ALL)
     private Set<Instructor> instructors;
     private UUID owner;
+    private CenterStatus status;
     @Builder
     public Center(
         String name,
@@ -34,5 +37,9 @@ public class Center extends BaseEntity {
         this.customers = new HashSet<>();
         this.instructors = new HashSet<>();
         this.owner = owner;
+        this.status = CenterStatus.WAIT;
+    }
+    public void deleteCenter() {
+        this.status = CenterStatus.DELETE;
     }
 }

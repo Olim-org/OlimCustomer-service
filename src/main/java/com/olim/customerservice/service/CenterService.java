@@ -14,5 +14,7 @@ public interface CenterService {
     @Transactional
     CenterGetListResponse getMyCenterList(UUID userId);
     @Transactional
+    String deleteCenter(UUID userId, UUID centerId);
+    @Transactional
     CenterFeignResponse getCenterInfo(UUID userId, UUID centerId);
 }

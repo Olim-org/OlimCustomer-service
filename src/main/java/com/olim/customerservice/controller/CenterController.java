@@ -49,6 +49,18 @@ public class CenterController {
             @RequestHeader("id") String userId) {
         return new ResponseEntity<>(this.centerService.getMyCenterList(UUID.fromString(userId)), HttpStatus.OK);
     }
+    @DeleteMapping("/{centerId}")
+    @Operation(description = "센터 삭제하기")
+    @Parameters({
+            @Parameter(name = "userId", description = "액세스 토큰 아이디", required = true, in = ParameterIn.HEADER),
+            @Parameter(name = "centerId", description = "센터 UUID", required = true, in = ParameterIn.PATH)
+    })
+    public ResponseEntity<String> deleteCenter(
+            @RequestHeader("id") String userId,
+            @PathVariable String centerId
+    ) {
+        return new ResponseEntity<>(this.centerService.deleteCenter(UUID.fromString(userId), UUID.fromString(centerId)), HttpStatus.OK);
+    }
     @Operation(description = "센터 정보 가져오기 Feign 클라이언트 용")
     @GetMapping("/info")
     public CenterFeignResponse getCenterInfo(@RequestHeader("id") String userId, String centerId) {

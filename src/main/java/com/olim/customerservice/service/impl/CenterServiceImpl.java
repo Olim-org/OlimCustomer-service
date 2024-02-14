@@ -8,6 +8,7 @@ import com.olim.customerservice.dto.response.CenterFeignResponse;
 import com.olim.customerservice.dto.response.UserInfoFeignResponse;
 import com.olim.customerservice.entity.Center;
 import com.olim.customerservice.entity.Instructor;
+import com.olim.customerservice.enumeration.CenterStatus;
 import com.olim.customerservice.exception.customexception.DataNotFoundException;
 import com.olim.customerservice.exception.customexception.PermissionFailException;
 import com.olim.customerservice.repository.CenterRepository;
@@ -60,13 +61,29 @@ public class CenterServiceImpl implements CenterService {
     }
     @Override
     public CenterGetListResponse getMyCenterList(UUID userId) {
-        List<Center> centers = this.centerRepository.findAllByOwner(userId);
+        List<Center> centers = this.centerRepository.findAllByOwnerAndStatusIsNot(userId, CenterStatus.DELETE);
         if (centers.size() == 0) {
             throw new DataNotFoundException("해당 유저가 소유 중인 센터가 존재하지 않습니다");
         }
         CenterGetListResponse centerGetListResponse = CenterGetListResponse.makeDto(centers);
         return centerGetListResponse;
     }
+
+    @Override
+    public String deleteCenter(UUID userId, UUID centerId) {
+        Optional<Center> center = centerRepository.findById(centerId);
+        if (!center.isPresent()) {
+            throw new DataNotFoundException("해당 아이디의 센터를 찾을 수 없습니다.");
+        }
+        if (!center.get().getOwner().equals(userId)) {
+            throw new PermissionFailException("해당 센터를 삭제할 권한이 없습니다.");
+        }
+        Center gotCenter = center.get();
+        gotCenter.deleteCenter();
+        centerRepository.save(gotCenter);
+        return "성공적으로 해당 센터가 삭제 되었습니다.";
+    }
+
     @Override
     public CenterFeignResponse getCenterInfo(UUID userId, UUID centerId) {
         Optional<Center> center = centerRepository.findById(centerId);
