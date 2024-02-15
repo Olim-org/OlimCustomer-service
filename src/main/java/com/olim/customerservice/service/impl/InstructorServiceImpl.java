@@ -105,6 +105,12 @@ public class InstructorServiceImpl implements InstructorService {
         if (instructorId == null) {
             throw new DataNotFoundException("해당 아이디의 강사를 찾을 수 없습니다.");
         }
+        if (instructorModifyRequest.status().getKey().equals("DELETE")) {
+            throw new PermissionFailException("강사를 삭제할 수 없습니다. 삭제는 삭제 API를 이용해주세요.");
+        }
+        if (instructorModifyRequest.status().getKey().equals("CENTER_DELETED")) {
+            throw new PermissionFailException("해당 방식은 허용되지 않습니다.");
+        }
         Optional<Instructor> instructor = instructorRepository.findById(instructorId);
         if (!instructor.isPresent()) {
             throw new DataNotFoundException("해당 아이디의 강사를 찾을 수 없습니다.");
