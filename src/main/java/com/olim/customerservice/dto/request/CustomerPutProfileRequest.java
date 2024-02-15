@@ -1,5 +1,6 @@
 package com.olim.customerservice.dto.request;
 
+import com.olim.customerservice.enumeration.CustomerStatus;
 import com.olim.customerservice.enumeration.Gender;
 import com.olim.customerservice.enumeration.VisitRoute;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -35,6 +36,9 @@ public record CustomerPutProfileRequest(
     String pregnant,
     String lifeHabit,
     String desiredTimeSlot,
-    Boolean kakaoTalkAlert
+    Boolean kakaoTalkAlert,
+    @NotBlank
+    @Schema(description = "고객 상태", example = "ACTIVE OR INACTIVE")
+    CustomerStatus status
 ) {
 }

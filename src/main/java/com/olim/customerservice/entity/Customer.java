@@ -3,6 +3,7 @@ package com.olim.customerservice.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.olim.customerservice.dto.request.CustomerPutProfileRequest;
 import com.olim.customerservice.enumeration.CustomerRole;
+import com.olim.customerservice.enumeration.CustomerStatus;
 import com.olim.customerservice.enumeration.Gender;
 import com.olim.customerservice.enumeration.VisitRoute;
 import jakarta.persistence.*;
@@ -55,6 +56,7 @@ public class Customer extends BaseEntity {
     private String lifeHabit;
     private String desiredTimeSlot;
     private Boolean kakaoTalkAlert;
+    private CustomerStatus status;
     @Builder
     public Customer(
             Long centerCustomerId,
@@ -77,6 +79,7 @@ public class Customer extends BaseEntity {
         this.center = center;
         this.instructor = instructor;
         this.owner = owner;
+        this.status = CustomerStatus.ACTIVE;
     }
     public void updateRole(CustomerRole role) {
         this.role = role;
@@ -96,5 +99,9 @@ public class Customer extends BaseEntity {
         this.desiredTimeSlot = customerPutProfileRequest.desiredTimeSlot();
         this.kakaoTalkAlert = customerPutProfileRequest.kakaoTalkAlert();
         this.instructor = instructor;
+        this.status = customerPutProfileRequest.status();
+    }
+    public void deletedByCenter() {
+        this.status = CustomerStatus.CENTER_DELETED;
     }
 }

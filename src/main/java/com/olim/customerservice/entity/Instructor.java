@@ -74,4 +74,8 @@ public class Instructor extends BaseEntity {
     public void deleteInstructor() {
         this.status = InstructorStatus.DELETE;
     }
+    public void deletedByCenter() {
+        this.status = InstructorStatus.CENTER_DELETED;
+    }
+
 }

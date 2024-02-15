@@ -8,6 +8,7 @@ import com.olim.customerservice.dto.response.CenterGetListResponse;
 import com.olim.customerservice.dto.response.CenterFeignResponse;
 import com.olim.customerservice.dto.response.UserInfoFeignResponse;
 import com.olim.customerservice.entity.Center;
+import com.olim.customerservice.entity.Customer;
 import com.olim.customerservice.entity.Instructor;
 import com.olim.customerservice.enumeration.CenterStatus;
 import com.olim.customerservice.exception.customexception.DataNotFoundException;
@@ -97,7 +98,17 @@ public class CenterServiceImpl implements CenterService {
         }
         Center gotCenter = center.get();
         gotCenter.deleteCenter();
-        centerRepository.save(gotCenter);
+        Center deletedCenter = centerRepository.save(gotCenter);
+        List<Customer> customers = customerRepository.findAllByCenter(deletedCenter);
+        List<Instructor> instructors = instructorRepository.findAllByCenter(deletedCenter);
+        for (Customer customer : customers) {
+            customer.deletedByCenter();
+        }
+        for (Instructor instructor : instructors) {
+            instructor.deletedByCenter();
+        }
+        instructorRepository.saveAll(instructors);
+        customerRepository.saveAll(customers);
         return "성공적으로 해당 센터가 삭제 되었습니다.";
     }
 
