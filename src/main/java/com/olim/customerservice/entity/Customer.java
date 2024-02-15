@@ -105,4 +105,7 @@ public class Customer extends BaseEntity {
     public void deletedByCenter() {
         this.status = CustomerStatus.CENTER_DELETED;
     }
+    public void deleteCustomer() {
+        this.status = CustomerStatus.DELETE;
+    }
 }

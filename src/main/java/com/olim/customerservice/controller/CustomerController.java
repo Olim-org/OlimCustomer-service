@@ -82,5 +82,16 @@ public class CustomerController {
     ) {
         return new ResponseEntity<>(this.customerService.getCustomerProfile(customerId, UUID.fromString(userId)), HttpStatus.OK);
     }
-
+    @DeleteMapping("/{customerId}")
+    @Operation(description = "센터 내 고객 삭제하기")
+    @Parameters({
+            @Parameter(name = "userId", description = "액세스 토큰 아이디", required = true, in = ParameterIn.HEADER),
+            @Parameter(name = "customerId", description = "고객 UID", required = true, in = ParameterIn.PATH)
+    })
+    public ResponseEntity<String> deleteCustomer(
+            @RequestHeader("id") String userId,
+            @PathVariable Long customerId
+    ) {
+        return new ResponseEntity<>(this.customerService.deleteCustomer(customerId, UUID.fromString(userId)), HttpStatus.OK);
+    }
 }

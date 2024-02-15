@@ -17,4 +17,6 @@ public interface CustomerService {
     String putCustomerProfile(Long customerId, UUID userId, CustomerPutProfileRequest customerPutProfileRequest);
     @Transactional
     CustomerGetResponse getCustomerProfile(Long customerId, UUID userId);
+    @Transactional
+    String deleteCustomer(Long customerId, UUID userId);
 }

@@ -10,6 +10,7 @@ import com.olim.customerservice.entity.Instructor;
 import com.olim.customerservice.enumeration.CenterStatus;
 import com.olim.customerservice.enumeration.CustomerRole;
 import com.olim.customerservice.enumeration.CustomerStatus;
+import com.olim.customerservice.enumeration.InstructorStatus;
 import com.olim.customerservice.exception.customexception.DataNotFoundException;
 import com.olim.customerservice.exception.customexception.PermissionFailException;
 import com.olim.customerservice.repository.CenterRepository;
@@ -127,6 +128,12 @@ public class CustomerServiceImpl implements CustomerService {
         if (!customer.get().getOwner().equals(userId)) {
             throw new PermissionFailException("해당 아이디의 고객 프로필을 등록할 권한이 없습니다.");
         }
+        if (customerPutProfileRequest.status().getKey().equals("DELETE")) {
+            throw new PermissionFailException("고객을 삭제할 수 없습니다. 삭제는 삭제 API를 이용해주세요.");
+        }
+        if (customerPutProfileRequest.status().getKey().equals("CENTER_DELETED")) {
+            throw new PermissionFailException("해당 방식은 허용되지 않습니다.");
+        }
         Customer gotCustomer = customer.get();
         Optional<Instructor> instructor = null;
         if (customerPutProfileRequest.instructorId() != null) {
@@ -155,6 +162,24 @@ public class CustomerServiceImpl implements CustomerService {
         Customer gotCustomer = customer.get();
         CustomerGetResponse customerGetResponse = CustomerGetResponse.makeDto(gotCustomer);
         return customerGetResponse;
+    }
+    @Transactional
+    @Override
+    public String deleteCustomer(Long customerId, UUID userId) {
+        if (customerId == null) {
+            throw new DataNotFoundException("해당 아이디의 고객을 찾을 수 없습니다.");
+        }
+        Optional<Customer> customer = this.customerRepository.findById(customerId);
+        if (!customer.isPresent()) {
+            throw new DataNotFoundException("해당 아이디의 고객을 찾을 수 없습니다.");
+        }
+        if (!customer.get().getOwner().equals(userId) || customer.get().getStatus() == CustomerStatus.DELETE) {
+            throw new PermissionFailException("해당 아이디의 고객이 이미 삭제 되었거나 고객을 삭제할 권한이 없습니다.");
+        }
+        Customer gotCustomer = customer.get();
+        gotCustomer.deleteCustomer();
+        this.customerRepository.save(gotCustomer);
+        return "성공적으로 " + gotCustomer.getName() + "님이 삭제 되었습니다.";
     }
 
     private Long getLastCustomerNumber(Center center) {
