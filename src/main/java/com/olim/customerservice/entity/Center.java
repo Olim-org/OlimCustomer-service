@@ -23,6 +23,10 @@ public class Center extends BaseEntity {
     @Column(name = "CENTER_ID", columnDefinition = "BINARY(16)")
     private UUID id;
     private String name;
+    private String description;
+    private String phoneNumber;
+    private String address;
+    private String imageUrl;
     @OneToMany(mappedBy = "center", cascade = CascadeType.ALL)
     private Set<Customer> customers;
     @OneToMany(mappedBy = "center", cascade = CascadeType.ALL)
@@ -47,5 +51,9 @@ public class Center extends BaseEntity {
             CenterModifyRequest centerModifyRequest
     ) {
         this.name = centerModifyRequest.name();
+        this.description = centerModifyRequest.description();
+        this.phoneNumber = centerModifyRequest.phoneNumber();
+        this.address = centerModifyRequest.address();
+        this.imageUrl = centerModifyRequest.imageUrl();
     }
 }
