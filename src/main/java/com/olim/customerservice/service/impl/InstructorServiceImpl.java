@@ -91,7 +91,7 @@ public class InstructorServiceImpl implements InstructorService {
             Sort sort = Sort.by("name").ascending();
 
             Pageable pageable = PageRequest.of(page, count, sort);
-            Page<Instructor> instructors = this.instructorRepository.findAllByOwnerAndNameContaining(userId, keyword, pageable);
+            Page<Instructor> instructors = this.instructorRepository.findAllByOwnerAndStatusNotInAndNameContaining(userId, List.of(InstructorStatus.CENTER_DELETED, InstructorStatus.DELETE), keyword, pageable);
 
             InstructorGetListByCenterResponse instructorGetListByCenterResponse =
                     InstructorGetListByCenterResponse.makeDto(instructors);

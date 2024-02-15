@@ -9,6 +9,7 @@ import com.olim.customerservice.entity.Customer;
 import com.olim.customerservice.entity.Instructor;
 import com.olim.customerservice.enumeration.CenterStatus;
 import com.olim.customerservice.enumeration.CustomerRole;
+import com.olim.customerservice.enumeration.CustomerStatus;
 import com.olim.customerservice.exception.customexception.DataNotFoundException;
 import com.olim.customerservice.exception.customexception.PermissionFailException;
 import com.olim.customerservice.repository.CenterRepository;
@@ -110,7 +111,7 @@ public class CustomerServiceImpl implements CustomerService {
 
             Pageable pageable = PageRequest.of(page, count, sort);
 
-            Page<Customer> customers = this.customerRepository.findAllByOwnerAndRoleAndNameContaining(userId, CustomerRole.CUSTOMER_USER, keyword, pageable);
+            Page<Customer> customers = this.customerRepository.findAllByOwnerAndRoleAndStatusNotInAndNameContaining(userId, CustomerRole.CUSTOMER_USER, List.of(CustomerStatus.CENTER_DELETED, CustomerStatus.DELETE), keyword, pageable);
 
             CustomerListResponse customerListResponse = CustomerListResponse.makeDto(customers);
             return customerListResponse;
