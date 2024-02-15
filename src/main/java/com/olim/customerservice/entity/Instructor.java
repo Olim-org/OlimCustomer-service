@@ -32,6 +32,7 @@ public class Instructor extends BaseEntity {
     private String phoneNumber;
     private String address;
     private UUID owner;
+    @Enumerated(value = EnumType.STRING)
     private InstructorStatus status;
     @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL)
     private List<Customer> customers;

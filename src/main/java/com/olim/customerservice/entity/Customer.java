@@ -56,6 +56,7 @@ public class Customer extends BaseEntity {
     private String lifeHabit;
     private String desiredTimeSlot;
     private Boolean kakaoTalkAlert;
+    @Enumerated(value = EnumType.STRING)
     private CustomerStatus status;
     @Builder
     public Customer(
