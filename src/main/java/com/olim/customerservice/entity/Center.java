@@ -25,7 +25,9 @@ public class Center extends BaseEntity {
     private String name;
     private String description;
     private String phoneNumber;
+    private String email;
     private String address;
+    private String detailAddress;
     private String imageUrl;
     @OneToMany(mappedBy = "center", cascade = CascadeType.ALL)
     private Set<Customer> customers;
@@ -53,7 +55,9 @@ public class Center extends BaseEntity {
         this.name = centerModifyRequest.name();
         this.description = centerModifyRequest.description();
         this.phoneNumber = centerModifyRequest.phoneNumber();
+        this.email = centerModifyRequest.email();
         this.address = centerModifyRequest.address();
+        this.detailAddress = centerModifyRequest.detailAddress();
         this.imageUrl = centerModifyRequest.imageUrl();
     }
 }

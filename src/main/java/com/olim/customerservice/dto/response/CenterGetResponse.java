@@ -14,8 +14,12 @@ public record CenterGetResponse(
         String description,
         @Schema(description = "센터 전화번호", example = "010-1234-5678")
         String phoneNumber,
+        @Schema(description = "센터 이메일", example = "pyre@pyre.com")
+        String email,
         @Schema(description = "센터 주소", example = "서울시 강남구")
         String address,
+        @Schema(description = "센터 상세주소", example = "강남1로 19-202")
+        String detailAddress,
         @Schema(description = "센터 이미지 URL", example = "https://www.naver.com")
         String imageUrl
 ) {
@@ -25,7 +29,9 @@ public record CenterGetResponse(
                 center.getName(),
                 center.getDescription(),
                 center.getPhoneNumber(),
+                center.getEmail(),
                 center.getAddress(),
+                center.getDetailAddress(),
                 center.getImageUrl()
         );
         return response;
