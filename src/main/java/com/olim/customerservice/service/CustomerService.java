@@ -2,6 +2,7 @@ package com.olim.customerservice.service;
 
 import com.olim.customerservice.dto.request.CustomerEnrollRequest;
 import com.olim.customerservice.dto.request.CustomerPutProfileRequest;
+import com.olim.customerservice.dto.response.CustomerFeignResponse;
 import com.olim.customerservice.dto.response.CustomerGetResponse;
 import com.olim.customerservice.dto.response.CustomerListResponse;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,4 +22,6 @@ public interface CustomerService {
     String deleteCustomer(Long customerId, UUID userId);
     @Transactional
     Boolean checkPhoneNumber(String phoneNumber, UUID centerId);
+    @Transactional
+    CustomerFeignResponse getCustomerInfo(UUID userId, Long customerId);
 }

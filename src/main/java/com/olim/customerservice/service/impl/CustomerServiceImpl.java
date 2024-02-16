@@ -2,6 +2,7 @@ package com.olim.customerservice.service.impl;
 
 import com.olim.customerservice.dto.request.CustomerEnrollRequest;
 import com.olim.customerservice.dto.request.CustomerPutProfileRequest;
+import com.olim.customerservice.dto.response.CustomerFeignResponse;
 import com.olim.customerservice.dto.response.CustomerGetResponse;
 import com.olim.customerservice.dto.response.CustomerListResponse;
 import com.olim.customerservice.entity.Center;
@@ -197,6 +198,19 @@ public class CustomerServiceImpl implements CustomerService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public CustomerFeignResponse getCustomerInfo(UUID userId, Long customerId) {
+        Optional<Customer> customer = this.customerRepository.findById(customerId);
+        if (!customer.isPresent()) {
+            throw new DataNotFoundException("해당 아이디의 고객을 찾을 수 없습니다.");
+        }
+        if (!customer.get().getOwner().equals(userId)) {
+            throw new PermissionFailException("해당 아이디의 고객 정보를 조회할 권한이 없습니다.");
+        }
+        CustomerFeignResponse customerFeignResponse = CustomerFeignResponse.makeDto(customer.get());
+        return customerFeignResponse;
     }
 
     private Long getLastCustomerNumber(Center center) {

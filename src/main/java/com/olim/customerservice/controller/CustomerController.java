@@ -2,6 +2,8 @@ package com.olim.customerservice.controller;
 
 import com.olim.customerservice.dto.request.CustomerEnrollRequest;
 import com.olim.customerservice.dto.request.CustomerPutProfileRequest;
+import com.olim.customerservice.dto.response.CenterFeignResponse;
+import com.olim.customerservice.dto.response.CustomerFeignResponse;
 import com.olim.customerservice.dto.response.CustomerGetResponse;
 import com.olim.customerservice.dto.response.CustomerListResponse;
 import com.olim.customerservice.service.CustomerService;
@@ -105,5 +107,10 @@ public class CustomerController {
             @RequestParam("centerId") String centerId)
     {
         return new ResponseEntity<>(this.customerService.checkPhoneNumber(phoneNumber, UUID.fromString(centerId)), HttpStatus.OK);
+    }
+    @Operation(description = "고객 정보 가져오기 Feign 클라이언트 용")
+    @GetMapping("/info")
+    public CustomerFeignResponse getCenterInfo(@RequestHeader("id") String userId, @RequestParam(value = "centerId") Long customerId) {
+        return this.customerService.getCustomerInfo(UUID.fromString(userId), customerId);
     }
 }
