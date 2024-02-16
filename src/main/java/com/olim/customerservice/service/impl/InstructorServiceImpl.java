@@ -79,7 +79,7 @@ public class InstructorServiceImpl implements InstructorService {
 
             Pageable pageable = PageRequest.of(page, count, sort);
 
-            Page<Instructor> instructors = this.instructorRepository.findAllByCenterAndStatusNotInNameContaining(center.get(), List.of(InstructorStatus.CENTER_DELETED, InstructorStatus.DELETE), keyword, pageable);
+            Page<Instructor> instructors = this.instructorRepository.findAllByCenterAndStatusNotInAndNameContaining(center.get(), List.of(InstructorStatus.CENTER_DELETED, InstructorStatus.DELETE), keyword, pageable);
             InstructorGetListByCenterResponse instructorGetListByCenterResponse =
                     InstructorGetListByCenterResponse.makeDto(instructors);
             return instructorGetListByCenterResponse;
