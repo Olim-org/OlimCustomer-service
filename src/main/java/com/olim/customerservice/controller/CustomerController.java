@@ -94,4 +94,16 @@ public class CustomerController {
     ) {
         return new ResponseEntity<>(this.customerService.deleteCustomer(customerId, UUID.fromString(userId)), HttpStatus.OK);
     }
+    @GetMapping("/check-phone/{phoneNumber}")
+    @Operation(description = "전화번호 중복 확인")
+    @Parameters({
+            @Parameter(name = "phoneNumber", description = "전화번호", required = true, in = ParameterIn.PATH),
+            @Parameter(name = "centerId", description = "센터 UUID", required = true, in = ParameterIn.QUERY)
+    })
+    public ResponseEntity<Boolean> checkPhoneNumber(
+            @PathVariable String phoneNumber,
+            @RequestParam("centerId") String centerId)
+    {
+        return new ResponseEntity<>(this.customerService.checkPhoneNumber(phoneNumber, UUID.fromString(centerId)), HttpStatus.OK);
+    }
 }

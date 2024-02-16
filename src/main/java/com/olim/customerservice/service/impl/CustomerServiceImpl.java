@@ -49,6 +49,10 @@ public class CustomerServiceImpl implements CustomerService {
         if (!center.get().getOwner().equals(userId)) {
             throw new DataNotFoundException("센터 관리자 또는 점주가 아닙니다.");
         }
+        Optional<Customer> customerByPhoneNumber = this.customerRepository.findByCenterAndPhoneNumberAndStatusNotIn(center.get(), customerEnrollRequest.phoneNumber(), List.of(CustomerStatus.DELETE, CustomerStatus.CENTER_DELETED));
+        if (customerByPhoneNumber.isPresent()) {
+            throw new DataNotFoundException("해당 전화번호로 등록된 회원이 이미 존재합니다.");
+        }
         Instructor gotInstructor = null;
         if (customerEnrollRequest.instructorId() != null) {
             Optional<Instructor> instructor = this.instructorRepository.findById(customerEnrollRequest.instructorId());
@@ -180,6 +184,19 @@ public class CustomerServiceImpl implements CustomerService {
         gotCustomer.deleteCustomer();
         this.customerRepository.save(gotCustomer);
         return "성공적으로 " + gotCustomer.getName() + "님이 삭제 되었습니다.";
+    }
+    @Override
+    public Boolean checkPhoneNumber(String phoneNumber, UUID centerId) {
+        Optional<Center> center = this.centerRepository.findById(centerId);
+        if (!center.isPresent()) {
+            throw new DataNotFoundException("해당 아이디의 센터를 찾을 수 없습니다.");
+        }
+
+        Optional<Customer> customer = this.customerRepository.findByCenterAndPhoneNumberAndStatusNotIn(center.get(), phoneNumber, List.of(CustomerStatus.DELETE, CustomerStatus.CENTER_DELETED));
+        if (customer.isPresent()) {
+            return true;
+        }
+        return false;
     }
 
     private Long getLastCustomerNumber(Center center) {

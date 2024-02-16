@@ -19,4 +19,6 @@ public interface CustomerService {
     CustomerGetResponse getCustomerProfile(Long customerId, UUID userId);
     @Transactional
     String deleteCustomer(Long customerId, UUID userId);
+    @Transactional
+    Boolean checkPhoneNumber(String phoneNumber, UUID centerId);
 }

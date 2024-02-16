@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @Repository
 public interface InstructorRepository extends JpaRepository<Instructor, Long> {
-    Page<Instructor> findAllByCenterAndNameContaining(Center center, String name, Pageable pageable);
+    Page<Instructor> findAllByCenterAndStatusNotInNameContaining(Center center, List<InstructorStatus> status, String name, Pageable pageable);
     List<Instructor> findAllByCenter(Center center);
     Instructor findTopByCenterOrderByCenterInstructorIdDesc(Center center);
     Page<Instructor> findAllByOwnerAndStatusNotInAndNameContaining(UUID owner, List<InstructorStatus> status, String name, Pageable pageable);
