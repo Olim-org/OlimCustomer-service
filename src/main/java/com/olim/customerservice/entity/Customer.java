@@ -95,7 +95,6 @@ public class Customer extends BaseEntity {
     public void updateProfile(CustomerPutProfileRequest customerPutProfileRequest, Instructor instructor) {
         this.name = customerPutProfileRequest.name();
         this.gender = customerPutProfileRequest.gender();
-        this.phoneNumber = customerPutProfileRequest.phoneNumber();
         this.birthDate = LocalDate.parse(customerPutProfileRequest.birthDate(), DateTimeFormatter.ISO_DATE);
         this.address = customerPutProfileRequest.address();
         this.visitRoute = customerPutProfileRequest.visitRoute();
