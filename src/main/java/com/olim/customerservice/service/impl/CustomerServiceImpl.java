@@ -97,7 +97,7 @@ public class CustomerServiceImpl implements CustomerService {
 
             Pageable pageable = PageRequest.of(page, count, sort);
 
-            Page<Customer> customers = this.customerRepository.findAllByCenterAndRoleAndNameContaining(center.get(), CustomerRole.CUSTOMER_USER, keyword, pageable);
+            Page<Customer> customers = this.customerRepository.findAllByCenterAndRoleAndStatusNotInAndNameContaining(center.get(), CustomerRole.CUSTOMER_USER, List.of(CustomerStatus.DELETE, CustomerStatus.CENTER_DELETED), keyword, pageable);
             CustomerListResponse customerListResponse = CustomerListResponse.makeDto(customers);
             return customerListResponse;
         } else {

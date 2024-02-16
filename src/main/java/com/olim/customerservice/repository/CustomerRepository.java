@@ -21,6 +21,6 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     Optional<Customer> findByCenterAndUserId(Center center, UUID userId);
     Customer findTopByCenterOrderByCenterCustomerIdDesc(Center center);
     Optional<Customer> findByCenterAndId(Center center, Long id);
-    Page<Customer> findAllByCenterAndRoleAndNameContaining(Center center, CustomerRole role, String name, Pageable pageable);
+    Page<Customer> findAllByCenterAndRoleAndStatusNotInAndNameContaining(Center center, CustomerRole role, List<CustomerStatus> status, String name, Pageable pageable);
     Page<Customer> findAllByOwnerAndRoleAndStatusNotInAndNameContaining(UUID owner, CustomerRole role, List<CustomerStatus> status, String name, Pageable pageable);
 }
