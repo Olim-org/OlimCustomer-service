@@ -32,6 +32,7 @@ public class Customer extends BaseEntity {
     private Gender gender;
     private LocalDate birthDate;
     private String phoneNumber;
+    @Column(length = 1000)
     private String address;
     private UUID owner;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -49,11 +50,17 @@ public class Customer extends BaseEntity {
     // 고객 추가 기입 정보
     @Enumerated(value = EnumType.STRING)
     private List<VisitRoute> visitRoute;
+    @Column(length = 1000)
     private String healthExp;
+    @Column(length = 1000)
     private String purpose;
+    @Column(length = 1000)
     private String diseases;
+    @Column(length = 1000)
     private String pregnant;
+    @Column(length = 1000)
     private String lifeHabit;
+    @Column(length = 1000)
     private String desiredTimeSlot;
     private Boolean kakaoTalkAlert;
     @Enumerated(value = EnumType.STRING)

@@ -22,12 +22,17 @@ public class Center extends BaseEntity {
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(name = "CENTER_ID", columnDefinition = "BINARY(16)")
     private UUID id;
+    @Column(length = 1000)
     private String name;
+    @Column(columnDefinition = "longtext")
     private String description;
     private String phoneNumber;
     private String email;
+    @Column(length = 1000)
     private String address;
+    @Column(length = 1000)
     private String detailAddress;
+    @Column(length = 1000)
     private String imageUrl;
     @OneToMany(mappedBy = "center", cascade = CascadeType.ALL)
     private Set<Customer> customers;

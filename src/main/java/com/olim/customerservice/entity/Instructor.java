@@ -30,6 +30,7 @@ public class Instructor extends BaseEntity {
     private Gender gender;
     private LocalDate birthDate;
     private String phoneNumber;
+    @Column(length = 1000)
     private String address;
     private UUID owner;
     @Enumerated(value = EnumType.STRING)
