@@ -22,7 +22,9 @@ public record InstructorGetResponse(
         @Schema(description = "강사 번호", example = "01099998888")
         String phoneNumber,
         @Schema(description = "강사 주소", example = "울산광역시 울주군 ..")
-        String address
+        String address,
+        @Schema(description = "강사 생성 일", example = "YYYY-MM-dd HH:mm")
+        String cAt
 ) {
     public static InstructorGetResponse makeDto(Instructor instructor) {
         InstructorGetResponse response = new InstructorGetResponse(
@@ -33,7 +35,8 @@ public record InstructorGetResponse(
                 instructor.getGender(),
                 instructor.getBirthDate().format(DateTimeFormatter.ISO_DATE),
                 instructor.getPhoneNumber(),
-                instructor.getAddress()
+                instructor.getAddress(),
+                instructor.getCAt().format(DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm"))
         );
         return response;
     }

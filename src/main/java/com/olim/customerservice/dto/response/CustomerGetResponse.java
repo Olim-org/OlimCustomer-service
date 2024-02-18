@@ -47,7 +47,9 @@ public record CustomerGetResponse(
         @Schema(description = "원하는 운동 시간대", example = "NONE")
         String desiredTimeSlot,
         @Schema(description = "카카오톡 알림 여부", example = "true")
-        Boolean kakaoTalkAlert
+        Boolean kakaoTalkAlert,
+        @Schema(description = "고객 생성 일", example = "YYYY-MM-dd HH:mm")
+        String cAt
 
 ) {
     public static CustomerGetResponse makeDto(Customer customer) {
@@ -69,7 +71,8 @@ public record CustomerGetResponse(
                 customer.getPregnant(),
                 customer.getLifeHabit(),
                 customer.getDesiredTimeSlot(),
-                customer.getKakaoTalkAlert()
+                customer.getKakaoTalkAlert(),
+                customer.getCAt().format(DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm"))
         );
         return response;
     }
