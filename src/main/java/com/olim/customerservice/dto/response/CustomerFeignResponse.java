@@ -9,7 +9,8 @@ public record CustomerFeignResponse(
     UUID userId,
     String name,
     String phoneNumber,
-    UUID owner
+    UUID owner,
+    UUID centerId
 ) {
     public static CustomerFeignResponse makeDto(Customer customer) {
         return new CustomerFeignResponse(
@@ -17,7 +18,8 @@ public record CustomerFeignResponse(
             customer.getUserId(),
             customer.getName(),
             customer.getPhoneNumber(),
-            customer.getOwner()
+            customer.getOwner(),
+            customer.getCenter().getId()
         );
     }
 }
