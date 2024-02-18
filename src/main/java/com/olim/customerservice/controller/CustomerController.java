@@ -110,7 +110,7 @@ public class CustomerController {
     }
     @Operation(description = "고객 정보 가져오기 Feign 클라이언트 용")
     @GetMapping("/info")
-    public CustomerFeignResponse getCenterInfo(@RequestHeader("id") String userId, @RequestParam(value = "centerId") Long customerId) {
+    public CustomerFeignResponse getCenterInfo(@RequestHeader("id") String userId, @RequestParam(value = "customerId") Long customerId) {
         return this.customerService.getCustomerInfo(UUID.fromString(userId), customerId);
     }
 }
