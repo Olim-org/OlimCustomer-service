@@ -114,7 +114,7 @@ public class CustomerController {
         return this.customerService.getCustomerInfo(UUID.fromString(userId), customerId);
     }
     @Operation(description = "고객 정보 가져오기 Feign 클라이언트 용 with 휴대폰 번호")
-    @GetMapping("/info")
+    @GetMapping("/pinfo")
     public CustomerFeignResponse getCenterInfo(
             @RequestHeader("id") String userId,
             @RequestParam(value = "phoneNumber") String phoneNumber,
