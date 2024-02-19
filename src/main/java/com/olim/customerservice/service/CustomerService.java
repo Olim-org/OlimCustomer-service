@@ -24,4 +24,6 @@ public interface CustomerService {
     Boolean checkPhoneNumber(String phoneNumber, UUID centerId);
     @Transactional
     CustomerFeignResponse getCustomerInfo(UUID userId, Long customerId);
+    @Transactional
+    CustomerFeignResponse getCustomerInfo(UUID userId, String phoneNumber, String centerId);
 }

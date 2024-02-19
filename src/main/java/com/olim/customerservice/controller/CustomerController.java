@@ -108,9 +108,17 @@ public class CustomerController {
     {
         return new ResponseEntity<>(this.customerService.checkPhoneNumber(phoneNumber, UUID.fromString(centerId)), HttpStatus.OK);
     }
-    @Operation(description = "고객 정보 가져오기 Feign 클라이언트 용")
+    @Operation(description = "고객 정보 가져오기 Feign 클라이언트 용 with customerId")
     @GetMapping("/info")
     public CustomerFeignResponse getCenterInfo(@RequestHeader("id") String userId, @RequestParam(value = "customerId") Long customerId) {
         return this.customerService.getCustomerInfo(UUID.fromString(userId), customerId);
+    }
+    @Operation(description = "고객 정보 가져오기 Feign 클라이언트 용 with 휴대폰 번호")
+    @GetMapping("/info")
+    public CustomerFeignResponse getCenterInfo(
+            @RequestHeader("id") String userId,
+            @RequestParam(value = "phoneNumber") String phoneNumber,
+            @RequestParam(value = "centerId") String centerId) {
+        return this.customerService.getCustomerInfo(UUID.fromString(userId), phoneNumber, centerId);
     }
 }

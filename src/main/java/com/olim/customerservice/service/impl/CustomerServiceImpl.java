@@ -213,6 +213,26 @@ public class CustomerServiceImpl implements CustomerService {
         return customerFeignResponse;
     }
 
+    @Override
+    public CustomerFeignResponse getCustomerInfo(UUID userId, String phoneNumber, String centerId) {
+        Optional<Center> center = this.centerRepository.findById(UUID.fromString(centerId));
+        if (!center.isPresent()) {
+            throw new DataNotFoundException("해당 아이디의 센터를 찾을 수 없습니다.");
+        }
+        if (!center.get().getOwner().equals(userId)) {
+            throw new PermissionFailException("해당 아이디의 센터 정보를 조회할 권한이 없습니다.");
+        }
+        Optional<Customer> customer = this.customerRepository.findByCenterAndPhoneNumber(center.get(), phoneNumber);
+        if (!customer.isPresent()) {
+            throw new DataNotFoundException("해당 아이디의 고객을 찾을 수 없습니다.");
+        }
+        if (!customer.get().getOwner().equals(userId)) {
+            throw new PermissionFailException("해당 아이디의 고객 정보를 조회할 권한이 없습니다.");
+        }
+        CustomerFeignResponse customerFeignResponse = CustomerFeignResponse.makeDto(customer.get());
+        return customerFeignResponse;
+    }
+
     private Long getLastCustomerNumber(Center center) {
         Customer customer = customerRepository.findTopByCenterOrderByCenterCustomerIdDesc(center);
         if (customer == null) {
