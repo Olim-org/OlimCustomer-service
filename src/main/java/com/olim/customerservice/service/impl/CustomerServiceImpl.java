@@ -2,6 +2,7 @@ package com.olim.customerservice.service.impl;
 
 import com.olim.customerservice.dto.request.CustomerEnrollRequest;
 import com.olim.customerservice.dto.request.CustomerPutProfileRequest;
+import com.olim.customerservice.dto.response.CustomerFeignListResponse;
 import com.olim.customerservice.dto.response.CustomerFeignResponse;
 import com.olim.customerservice.dto.response.CustomerGetResponse;
 import com.olim.customerservice.dto.response.CustomerListResponse;
@@ -214,7 +215,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerFeignResponse getCustomerInfo(UUID userId, String phoneNumber, String centerId) {
+    public CustomerFeignListResponse getCustomerInfo(UUID userId, String phoneNumber, String centerId) {
         Optional<Center> center = this.centerRepository.findById(UUID.fromString(centerId));
         if (!center.isPresent()) {
             throw new DataNotFoundException("해당 아이디의 센터를 찾을 수 없습니다.");
@@ -222,15 +223,15 @@ public class CustomerServiceImpl implements CustomerService {
         if (!center.get().getOwner().equals(userId)) {
             throw new PermissionFailException("해당 아이디의 센터 정보를 조회할 권한이 없습니다.");
         }
-        Optional<Customer> customer = this.customerRepository.findByCenterAndPhoneNumber(center.get(), phoneNumber);
-        if (!customer.isPresent()) {
-            throw new DataNotFoundException("해당 아이디의 고객을 찾을 수 없습니다.");
+        List<Customer> customers = this.customerRepository.findAllByCenterAndPhoneNumberEndingWith(center.get(), phoneNumber);
+        if (customers.isEmpty()) {
+            throw new DataNotFoundException("해당 번호의 고객을 찾을 수 없습니다.");
         }
-        if (!customer.get().getOwner().equals(userId)) {
-            throw new PermissionFailException("해당 아이디의 고객 정보를 조회할 권한이 없습니다.");
+        if (!customers.get(0).getOwner().equals(userId)) {
+            throw new PermissionFailException("해당 번호의 고객 정보를 조회할 권한이 없습니다.");
         }
-        CustomerFeignResponse customerFeignResponse = CustomerFeignResponse.makeDto(customer.get());
-        return customerFeignResponse;
+        CustomerFeignListResponse customerFeignListResponse = CustomerFeignListResponse.makeDto(customers);
+        return customerFeignListResponse;
     }
 
     private Long getLastCustomerNumber(Center center) {

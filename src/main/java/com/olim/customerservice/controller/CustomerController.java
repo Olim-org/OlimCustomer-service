@@ -2,10 +2,7 @@ package com.olim.customerservice.controller;
 
 import com.olim.customerservice.dto.request.CustomerEnrollRequest;
 import com.olim.customerservice.dto.request.CustomerPutProfileRequest;
-import com.olim.customerservice.dto.response.CenterFeignResponse;
-import com.olim.customerservice.dto.response.CustomerFeignResponse;
-import com.olim.customerservice.dto.response.CustomerGetResponse;
-import com.olim.customerservice.dto.response.CustomerListResponse;
+import com.olim.customerservice.dto.response.*;
 import com.olim.customerservice.service.CustomerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -115,7 +112,7 @@ public class CustomerController {
     }
     @Operation(description = "고객 정보 가져오기 Feign 클라이언트 용 with 휴대폰 번호")
     @GetMapping("/pinfo")
-    public CustomerFeignResponse getCenterInfo(
+    public CustomerFeignListResponse getCenterInfo(
             @RequestHeader("id") String userId,
             @RequestParam(value = "phoneNumber") String phoneNumber,
             @RequestParam(value = "centerId") String centerId) {
