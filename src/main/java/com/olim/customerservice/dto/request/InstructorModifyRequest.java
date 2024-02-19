@@ -4,6 +4,7 @@ import com.olim.customerservice.enumeration.Gender;
 import com.olim.customerservice.enumeration.InstructorStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 import java.util.UUID;
@@ -13,7 +14,7 @@ public record InstructorModifyRequest(
         @Pattern(regexp = "^[가-힣]{2,10}$", message = "이름은 한글 2~10자로 입력해주세요.")
         @Schema(description = "강사 이름", example = "김영웅")
         String name,
-        @NotBlank
+        @NotNull
         @Schema(description = "강사 성별", example = "FEMALE")
         Gender gender,
         @NotBlank
@@ -23,7 +24,7 @@ public record InstructorModifyRequest(
         @NotBlank
         @Schema(description = "강사 주소", example = "울산광역시 울주군 ..")
         String address,
-        @NotBlank
+        @NotNull
         @Schema(description = "강사 상태", example = "ACTIVE OR INACTIVE")
         InstructorStatus status
 ) {

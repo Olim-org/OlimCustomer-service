@@ -3,6 +3,7 @@ package com.olim.customerservice.dto.request;
 import com.olim.customerservice.enumeration.Gender;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 import java.util.UUID;
@@ -12,7 +13,7 @@ public record InstructorCreateRequest(
         @Pattern(regexp = "^[가-힣]{2,10}$", message = "이름은 한글 2~10자로 입력해주세요.")
         @Schema(description = "강사 이름", example = "김영웅")
         String name,
-        @NotBlank
+        @NotNull
         @Schema(description = "강사 성별", example = "FEMALE")
         Gender gender,
         @NotBlank

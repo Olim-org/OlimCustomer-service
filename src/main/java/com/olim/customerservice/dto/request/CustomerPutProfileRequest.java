@@ -5,6 +5,7 @@ import com.olim.customerservice.enumeration.Gender;
 import com.olim.customerservice.enumeration.VisitRoute;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public record CustomerPutProfileRequest(
     @Pattern(regexp = "^[가-힣]{2,10}$", message = "이름은 한글 2~10자로 입력해주세요.")
     @Schema(description = "고객 이름", example = "김영웅")
     String name,
-    @NotBlank
+    @NotNull
     @Schema(description = "고객 성별", example = "FEMALE")
     Gender gender,
     @NotBlank
@@ -46,6 +47,7 @@ public record CustomerPutProfileRequest(
     @Schema(description = "카카오톡 알림 여부", example = "true")
     Boolean kakaoTalkAlert,
     @Schema(description = "고객 상태", example = "ACTIVE OR INACTIVE")
+    @NotNull
     CustomerStatus status
 ) {
 }

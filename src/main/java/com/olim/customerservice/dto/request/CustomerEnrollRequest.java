@@ -3,12 +3,13 @@ package com.olim.customerservice.dto.request;
 import com.olim.customerservice.enumeration.Gender;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 import java.util.UUID;
 
 public record CustomerEnrollRequest(
-        @NotBlank
+        @NotNull
         @Schema(description = "고객 이름", example = "김영웅")
         @Pattern(regexp = "^[가-힣]{2,10}$", message = "이름은 한글 2~10자로 입력해주세요.")
         String name,
