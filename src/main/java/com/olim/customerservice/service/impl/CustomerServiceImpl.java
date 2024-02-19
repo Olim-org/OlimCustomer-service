@@ -223,7 +223,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (!center.get().getOwner().equals(userId)) {
             throw new PermissionFailException("해당 아이디의 센터 정보를 조회할 권한이 없습니다.");
         }
-        List<Customer> customers = this.customerRepository.findAllByCenterAndPhoneNumberEndingWith(center.get(), phoneNumber);
+        List<Customer> customers = this.customerRepository.findAllByCenterAndStatusNotInAndPhoneNumberEndingWith(center.get(), List.of(CustomerStatus.DELETE, CustomerStatus.CENTER_DELETED), phoneNumber);
         if (customers.isEmpty()) {
             throw new DataNotFoundException("해당 번호의 고객을 찾을 수 없습니다.");
         }
