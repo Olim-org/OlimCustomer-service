@@ -15,6 +15,7 @@ import com.olim.customerservice.enumeration.CenterStatus;
 import com.olim.customerservice.enumeration.CustomerRole;
 import com.olim.customerservice.enumeration.CustomerStatus;
 import com.olim.customerservice.enumeration.InstructorStatus;
+import com.olim.customerservice.exception.customexception.CustomException;
 import com.olim.customerservice.exception.customexception.DataNotFoundException;
 import com.olim.customerservice.exception.customexception.PermissionFailException;
 import com.olim.customerservice.repository.CenterRepository;
@@ -66,6 +67,12 @@ public class CustomerServiceImpl implements CustomerService {
                 throw new DataNotFoundException("해당 강사를 찾을 수 없습니다.");
             }
             gotInstructor = instructor.get();
+            if (gotInstructor.getStatus() == InstructorStatus.DELETE) {
+                throw new CustomException("해당 강사는 이미 삭제된 강사입니다.");
+            }
+            if (gotInstructor.getStatus() == InstructorStatus.CENTER_DELETED) {
+                throw new CustomException("해당 강사는 센터가 삭제된 강사입니다.");
+            }
         }
         Customer customer = Customer.builder()
                 .name(customerEnrollRequest.name())
@@ -145,6 +152,12 @@ public class CustomerServiceImpl implements CustomerService {
             throw new PermissionFailException("해당 방식은 허용되지 않습니다.");
         }
         Customer gotCustomer = customer.get();
+        if (gotCustomer.getStatus() == CustomerStatus.DELETE) {
+            throw new DataNotFoundException("해당 고객은 삭제된 고객입니다.");
+        }
+        if (gotCustomer.getStatus() == CustomerStatus.CENTER_DELETED) {
+            throw new DataNotFoundException("해당 고객은 삭제된 센터의 고객입니다.");
+        }
         Optional<Instructor> instructor = null;
         if (customerPutProfileRequest.instructorId() != null) {
             instructor = this.instructorRepository.findById(customerPutProfileRequest.instructorId());
@@ -153,6 +166,9 @@ public class CustomerServiceImpl implements CustomerService {
             }
             if (!instructor.get().getOwner().equals(userId)) {
                 throw new DataNotFoundException("해당 강사는 해당 센터에 소속된 강사가 아닙니다.");
+            }
+            if (instructor.get().getStatus() == InstructorStatus.DELETE) {
+                throw new DataNotFoundException("해당 강사는 삭제된 강사입니다.");
             }
         }
         gotCustomer.updateProfile(customerPutProfileRequest, instructor != null ? instructor.get() : null);

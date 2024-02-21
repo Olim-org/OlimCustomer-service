@@ -9,6 +9,7 @@ import com.olim.customerservice.entity.Instructor;
 import com.olim.customerservice.enumeration.CenterStatus;
 import com.olim.customerservice.enumeration.CustomerRole;
 import com.olim.customerservice.enumeration.InstructorStatus;
+import com.olim.customerservice.exception.customexception.CustomException;
 import com.olim.customerservice.exception.customexception.DataNotFoundException;
 import com.olim.customerservice.exception.customexception.DuplicateException;
 import com.olim.customerservice.exception.customexception.PermissionFailException;
@@ -111,6 +112,7 @@ public class InstructorServiceImpl implements InstructorService {
         if (instructorModifyRequest.status().getKey().equals("CENTER_DELETED")) {
             throw new PermissionFailException("해당 방식은 허용되지 않습니다.");
         }
+
         Optional<Instructor> instructor = instructorRepository.findById(instructorId);
         if (!instructor.isPresent()) {
             throw new DataNotFoundException("해당 아이디의 강사를 찾을 수 없습니다.");
@@ -119,6 +121,12 @@ public class InstructorServiceImpl implements InstructorService {
             throw new PermissionFailException("해당 강사를 수정할 수 있는 권한이 없습니다.");
         }
         Instructor gotInstructor = instructor.get();
+        if (gotInstructor.getStatus() == InstructorStatus.DELETE) {
+            throw new CustomException("해당 강사는 이미 삭제된 강사입니다.");
+        }
+        if (gotInstructor.getStatus() == InstructorStatus.CENTER_DELETED) {
+            throw new CustomException("해당 강사는 센터가 삭제된 강사입니다.");
+        }
         gotInstructor.updateInstructor(instructorModifyRequest);
         instructorRepository.save(gotInstructor);
         return "성공적으로 강사 " + gotInstructor.getName() + "님의 정보가 수정 되었습니다.";
