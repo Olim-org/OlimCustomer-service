@@ -11,6 +11,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -45,7 +46,6 @@ public class Customer extends BaseEntity {
     @ToString.Exclude
     @JoinColumn(name = "CENTER_ID")
     private Center center;
-
     private CustomerRole role;
     // 고객 추가 기입 정보
     @Enumerated(value = EnumType.STRING)
@@ -65,6 +65,9 @@ public class Customer extends BaseEntity {
     private Boolean kakaoTalkAlert;
     @Enumerated(value = EnumType.STRING)
     private CustomerStatus status;
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    private List<CustomerAttend> customerAttends;
+    private Integer blackAttendCounts;
     @Builder
     public Customer(
             Long centerCustomerId,
@@ -88,6 +91,8 @@ public class Customer extends BaseEntity {
         this.instructor = instructor;
         this.owner = owner;
         this.status = CustomerStatus.ACTIVE;
+        this.customerAttends = new ArrayList<>();
+        this.blackAttendCounts = 0;
     }
     public void updateRole(CustomerRole role) {
         this.role = role;
@@ -113,5 +118,8 @@ public class Customer extends BaseEntity {
     }
     public void deleteCustomer() {
         this.status = CustomerStatus.DELETE;
+    }
+    public void addBlackAttendCounts() {
+        this.blackAttendCounts++;
     }
 }

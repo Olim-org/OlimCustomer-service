@@ -1,5 +1,6 @@
 package com.olim.customerservice.controller;
 
+import com.olim.customerservice.dto.request.CustomerAttendFeignRequest;
 import com.olim.customerservice.dto.request.CustomerEnrollRequest;
 import com.olim.customerservice.dto.request.CustomerPutProfileRequest;
 import com.olim.customerservice.dto.response.*;
@@ -117,5 +118,13 @@ public class CustomerController {
             @RequestParam(value = "phoneNumber") String phoneNumber,
             @RequestParam(value = "centerId") String centerId) {
         return this.customerService.getCustomerInfo(UUID.fromString(userId), phoneNumber, centerId);
+    }
+    @Operation(description = "고객 서비스 출석 Feign 클라이언트 용")
+    @PostMapping("/attend")
+    public String attend(
+            @RequestHeader("id") String userId,
+            @RequestBody CustomerAttendFeignRequest customerAttendFeignRequest
+    ) {
+        return this.customerService.attend(UUID.fromString(userId), customerAttendFeignRequest);
     }
 }

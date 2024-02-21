@@ -1,5 +1,6 @@
 package com.olim.customerservice.service.impl;
 
+import com.olim.customerservice.dto.request.CustomerAttendFeignRequest;
 import com.olim.customerservice.dto.request.CustomerEnrollRequest;
 import com.olim.customerservice.dto.request.CustomerPutProfileRequest;
 import com.olim.customerservice.dto.response.CustomerFeignListResponse;
@@ -8,6 +9,7 @@ import com.olim.customerservice.dto.response.CustomerGetResponse;
 import com.olim.customerservice.dto.response.CustomerListResponse;
 import com.olim.customerservice.entity.Center;
 import com.olim.customerservice.entity.Customer;
+import com.olim.customerservice.entity.CustomerAttend;
 import com.olim.customerservice.entity.Instructor;
 import com.olim.customerservice.enumeration.CenterStatus;
 import com.olim.customerservice.enumeration.CustomerRole;
@@ -16,6 +18,7 @@ import com.olim.customerservice.enumeration.InstructorStatus;
 import com.olim.customerservice.exception.customexception.DataNotFoundException;
 import com.olim.customerservice.exception.customexception.PermissionFailException;
 import com.olim.customerservice.repository.CenterRepository;
+import com.olim.customerservice.repository.CustomerAttendRepository;
 import com.olim.customerservice.repository.CustomerRepository;
 import com.olim.customerservice.repository.InstructorRepository;
 import com.olim.customerservice.service.CustomerService;
@@ -41,6 +44,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
     private final InstructorRepository instructorRepository;
     private final CenterRepository centerRepository;
+    private final CustomerAttendRepository customerAttendRepository;
     @Transactional
     @Override
     public String enrollCustomer(CustomerEnrollRequest customerEnrollRequest, UUID userId) {
@@ -232,6 +236,29 @@ public class CustomerServiceImpl implements CustomerService {
         }
         CustomerFeignListResponse customerFeignListResponse = CustomerFeignListResponse.makeDto(customers);
         return customerFeignListResponse;
+    }
+
+    @Override
+    public String attend(UUID userId, CustomerAttendFeignRequest customerAttendFeignRequest) {
+        Optional<Customer> customer = this.customerRepository.findById(customerAttendFeignRequest.customerId());
+        if (!customer.isPresent()) {
+            throw new DataNotFoundException("해당 아이디의 고객을 찾을 수 없습니다.");
+        }
+        Customer gotCustomer = customer.get();
+        if (!gotCustomer.getOwner().equals(userId)) {
+            throw new PermissionFailException("해당 아이디의 고객 출석을 생성할 권한이 없습니다.");
+        }
+        if (customerAttendFeignRequest.isBlackConsumer()) {
+            gotCustomer.addBlackAttendCounts();
+        }
+        this.customerRepository.save(gotCustomer);
+        CustomerAttend customerAttend = CustomerAttend.builder()
+                .customer(gotCustomer)
+                .attendId(customerAttendFeignRequest.attendId())
+                .isBlackConsumer(customerAttendFeignRequest.isBlackConsumer())
+                .build();
+        customerAttendRepository.save(customerAttend);
+        return "성공적으로 " + customer.get().getName() + "님의 출석이 완료 되었습니다.";
     }
 
     private Long getLastCustomerNumber(Center center) {

@@ -1,5 +1,6 @@
 package com.olim.customerservice.service;
 
+import com.olim.customerservice.dto.request.CustomerAttendFeignRequest;
 import com.olim.customerservice.dto.request.CustomerEnrollRequest;
 import com.olim.customerservice.dto.request.CustomerPutProfileRequest;
 import com.olim.customerservice.dto.response.CustomerFeignListResponse;
@@ -27,4 +28,6 @@ public interface CustomerService {
     CustomerFeignResponse getCustomerInfo(UUID userId, Long customerId);
     @Transactional
     CustomerFeignListResponse getCustomerInfo(UUID userId, String phoneNumber, String centerId);
+    @Transactional
+    String attend(UUID userId, CustomerAttendFeignRequest customerAttendFeignRequest);
 }
