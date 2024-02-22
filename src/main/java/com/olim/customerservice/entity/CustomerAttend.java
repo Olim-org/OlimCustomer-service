@@ -3,6 +3,7 @@ package com.olim.customerservice.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.util.UUID;
 
@@ -11,8 +12,9 @@ import java.util.UUID;
 @Getter
 public class CustomerAttend extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "CUSTOMER_ATTEND_ID")
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(name = "CUSTOMER_ATTEND_ID", columnDefinition = "BINARY(16)")
     private UUID id;
     private UUID attendId;
     private Boolean isBlackConsumer;
