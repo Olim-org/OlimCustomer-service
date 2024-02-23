@@ -31,7 +31,7 @@ public record CustomerPutProfileRequest(
     @Schema(description = "센터 UUID", example = "asdfw-rwqvc-vx")
     UUID centerId,
     @Schema(description = "방문 경로", example = "[INSTAGRAM]")
-    List<VisitRoute> visitRoute,
+    VisitRoute visitRoute,
     @Schema(description = "고객 건강 상태", example = "HEALTHY")
     String healthExp,
     @Schema(description = "고객 목적", example = "WEIGHT_LOSS")
@@ -48,6 +48,8 @@ public record CustomerPutProfileRequest(
     Boolean kakaoTalkAlert,
     @Schema(description = "고객 상태", example = "ACTIVE OR INACTIVE")
     @NotNull
-    CustomerStatus status
+    CustomerStatus status,
+    @Schema(description = "기타 사유", example = "기타 사유")
+    String othersReason
 ) {
 }

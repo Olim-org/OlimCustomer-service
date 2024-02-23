@@ -49,7 +49,7 @@ public class Customer extends BaseEntity {
     private CustomerRole role;
     // 고객 추가 기입 정보
     @Enumerated(value = EnumType.STRING)
-    private List<VisitRoute> visitRoute;
+    private VisitRoute visitRoute;
     @Column(length = 1000)
     private String healthExp;
     @Column(length = 1000)
@@ -68,6 +68,8 @@ public class Customer extends BaseEntity {
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<CustomerAttend> customerAttends;
     private Integer blackAttendCounts;
+    @Column(length = 1000)
+    private String othersReason;
     @Builder
     public Customer(
             Long centerCustomerId,
@@ -103,6 +105,9 @@ public class Customer extends BaseEntity {
         this.birthDate = LocalDate.parse(customerPutProfileRequest.birthDate(), DateTimeFormatter.ISO_DATE);
         this.address = customerPutProfileRequest.address();
         this.visitRoute = customerPutProfileRequest.visitRoute();
+        if (customerPutProfileRequest.visitRoute().getKey().equals("OTHERS")) {
+            this.othersReason = customerPutProfileRequest.othersReason();
+        }
         this.healthExp = customerPutProfileRequest.healthExp();
         this.purpose = customerPutProfileRequest.purpose();
         this.diseases = customerPutProfileRequest.diseases();
