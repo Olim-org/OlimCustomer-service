@@ -32,8 +32,8 @@ public record CustomerGetResponse(
         Long instructorId,
         @Schema(description = "강사 이름", example = "김영웅")
         String instructorName,
-        @Schema(description = "방문 경로", example = "[INSTAGRAM]")
-        List<VisitRoute> visitRoute,
+        @Schema(description = "방문 경로", example = "INSTAGRAM")
+        VisitRoute visitRoute,
         @Schema(description = "고객 건강 상태", example = "HEALTHY")
         String healthExp,
         @Schema(description = "고객 목적", example = "WEIGHT_LOSS")
