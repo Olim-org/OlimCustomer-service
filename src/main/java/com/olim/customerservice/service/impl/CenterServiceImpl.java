@@ -154,8 +154,8 @@ public class CenterServiceImpl implements CenterService {
 
         CenterNewCustomerResponse centerNewCustomerResponse = reserveClient.getTicketCustomersIsValid(userId.toString(), centerId.toString(), customerIds);
         List<TicketSalesResponse> ticketSalesResponses = reserveClient.getTicketSales(userId.toString(), centerId.toString(), startDate, endDate);
-        Map<VisitRoute, List<Long>> routeTicketSalesResponses = customers.stream().collect(
-                Collectors.groupingBy(Customer::getVisitRoute, Collectors.mapping(Customer::getId, Collectors.toList()))
+        Map<String, List<Long>> routeTicketSalesResponses = customers.stream().collect(
+                Collectors.groupingBy(customer -> customer.getVisitRoute().getKey(), Collectors.mapping(Customer::getId, Collectors.toList()))
         );
         List<RouteSalseResponse> routeSalseResponses = reserveClient.getRouteTicketSales(userId.toString(), centerId.toString(), routeTicketSalesResponses);
         Map<VisitRoute, Long> routeCustomerCount = customers.stream().collect(

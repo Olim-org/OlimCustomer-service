@@ -29,6 +29,6 @@ public interface ReserveClient {
     List<RouteSalseResponse> getRouteTicketSales(
             @RequestHeader("id") String userId,
             @RequestParam(value = "centerId") String centerId,
-            @RequestParam(value = "routeAndId") Map<VisitRoute, List<Long>> routeAndId);
+            @RequestParam(value = "routeAndId") Map<String, List<Long>> routeAndId);
 
 }
