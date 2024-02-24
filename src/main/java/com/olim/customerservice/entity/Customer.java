@@ -10,6 +10,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,6 +71,7 @@ public class Customer extends BaseEntity {
     private Integer blackAttendCounts;
     @Column(length = 1000)
     private String othersReason;
+    private LocalDateTime createdAt;
     @Builder
     public Customer(
             Long centerCustomerId,
@@ -95,6 +97,7 @@ public class Customer extends BaseEntity {
         this.status = CustomerStatus.ACTIVE;
         this.customerAttends = new ArrayList<>();
         this.blackAttendCounts = 0;
+        this.createdAt = LocalDateTime.now();
     }
     public void updateRole(CustomerRole role) {
         this.role = role;

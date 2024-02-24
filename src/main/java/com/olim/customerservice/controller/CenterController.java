@@ -2,10 +2,7 @@ package com.olim.customerservice.controller;
 
 import com.olim.customerservice.dto.request.CenterCreateRequest;
 import com.olim.customerservice.dto.request.CenterModifyRequest;
-import com.olim.customerservice.dto.response.CenterCreateResponse;
-import com.olim.customerservice.dto.response.CenterGetListResponse;
-import com.olim.customerservice.dto.response.CenterFeignResponse;
-import com.olim.customerservice.dto.response.CenterGetResponse;
+import com.olim.customerservice.dto.response.*;
 import com.olim.customerservice.service.CenterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -92,5 +89,21 @@ public class CenterController {
     @GetMapping("/info")
     public CenterFeignResponse getCenterInfo(@RequestHeader("id") String userId, @RequestParam(value = "centerId") String centerId) {
         return this.centerService.getCenterInfo(UUID.fromString(userId), UUID.fromString(centerId));
+    }
+    @GetMapping("/dashboard")
+    @Operation(description = "센터 대시보드 가져오기")
+    @Parameters({
+            @Parameter(name = "userId", description = "액세스 토큰 아이디", required = true, in = ParameterIn.HEADER),
+            @Parameter(name = "centerId", description = "센터 UUID", required = true, in = ParameterIn.QUERY),
+            @Parameter(name = "startDate", description = "시작 날짜", in = ParameterIn.QUERY, example = "2021-01-01"),
+            @Parameter(name = "endDate", description = "종료 날짜", in = ParameterIn.QUERY, example = "2021-12-31"),
+    })
+    public ResponseEntity<CenterDashBoardResponse> getCenterDashboard(
+            @RequestHeader("id") String userId,
+            @RequestParam("centerId") String centerId,
+            @RequestParam(value = "startDate", defaultValue = "") String startDate,
+            @RequestParam(value = "endDate", defaultValue = "") String endDate
+    ) {
+        return new ResponseEntity<>(this.centerService.getCenterDashboard(UUID.fromString(userId), UUID.fromString(centerId), startDate, endDate), HttpStatus.OK);
     }
 }

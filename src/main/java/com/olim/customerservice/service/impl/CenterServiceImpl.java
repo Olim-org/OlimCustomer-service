@@ -1,5 +1,6 @@
 package com.olim.customerservice.service.impl;
 
+import com.olim.customerservice.clients.ReserveClient;
 import com.olim.customerservice.clients.UserClient;
 import com.olim.customerservice.dto.request.CenterCreateRequest;
 import com.olim.customerservice.dto.request.CenterModifyRequest;
@@ -8,6 +9,8 @@ import com.olim.customerservice.entity.Center;
 import com.olim.customerservice.entity.Customer;
 import com.olim.customerservice.entity.Instructor;
 import com.olim.customerservice.enumeration.CenterStatus;
+import com.olim.customerservice.enumeration.CustomerStatus;
+import com.olim.customerservice.enumeration.VisitRoute;
 import com.olim.customerservice.exception.customexception.DataNotFoundException;
 import com.olim.customerservice.exception.customexception.PermissionFailException;
 import com.olim.customerservice.repository.CenterRepository;
@@ -19,9 +22,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +37,7 @@ public class CenterServiceImpl implements CenterService {
     private final CustomerRepository customerRepository;
     private final InstructorRepository instructorRepository;
     private final UserClient userClient;
+    private final ReserveClient reserveClient;
     @Transactional
     @Override
     public CenterCreateResponse createCenter(CenterCreateRequest centerCreateRequest, UUID userId, String token) {
@@ -132,5 +139,39 @@ public class CenterServiceImpl implements CenterService {
         }
         CenterFeignResponse centerFeignResponse = CenterFeignResponse.makeDto(center.get());
         return centerFeignResponse;
+    }
+    @Override
+    public CenterDashBoardResponse getCenterDashboard(UUID userId, UUID centerId, String startDate, String endDate) {
+        Optional<Center> center = centerRepository.findById(centerId);
+        if (!center.isPresent()) {
+            throw new DataNotFoundException("해당 센터를 찾을 수 없습니다.");
+        }
+        if (!center.get().getOwner().equals(userId)) {
+            throw new PermissionFailException("해당 센터를 조회할 권한이 없습니다.");
+        }
+        List<Customer> customers = customerRepository.findAllByCenterAndStatusNotInAndCreatedAtAfterAndCreatedAtBefore(center.get(), List.of(CustomerStatus.DELETE, CustomerStatus.CENTER_DELETED), LocalDateTime.of(LocalDate.parse(startDate, DateTimeFormatter.ISO_DATE), LocalTime.MIN), LocalDateTime.of(LocalDate.parse(endDate, DateTimeFormatter.ISO_DATE), LocalTime.MAX));
+        List<Long> customerIds = customers.stream().map(Customer::getId).toList();
+
+        CenterNewCustomerResponse centerNewCustomerResponse = reserveClient.getTicketCustomersIsValid(userId.toString(), centerId.toString(), customerIds);
+        List<TicketSalesResponse> ticketSalesResponses = reserveClient.getTicketSales(userId.toString(), centerId.toString(), startDate, endDate);
+        Map<VisitRoute, List<Long>> routeTicketSalesResponses = customers.stream().collect(
+                Collectors.groupingBy(Customer::getVisitRoute, Collectors.mapping(Customer::getId, Collectors.toList()))
+        );
+        List<RouteSalseResponse> routeSalseResponses = reserveClient.getRouteTicketSales(userId.toString(), centerId.toString(), routeTicketSalesResponses);
+        Map<VisitRoute, Long> routeCustomerCount = customers.stream().collect(
+                Collectors.groupingBy(Customer::getVisitRoute, Collectors.counting())
+        );
+        List<CenterVisitRouteResponse> centerVisitRouteResponses = new ArrayList<>();
+        for (VisitRoute visitRoute : VisitRoute.values()) {
+            CenterVisitRouteResponse centerVisitRouteResponse = CenterVisitRouteResponse.makeDto(visitRoute.getKey(), routeCustomerCount.getOrDefault(visitRoute, 0L).toString());
+            centerVisitRouteResponses.add(centerVisitRouteResponse);
+        }
+        CenterDashBoardResponse centerDashboardResponse = CenterDashBoardResponse.makeDto(
+                centerNewCustomerResponse,
+                ticketSalesResponses,
+                routeSalseResponses,
+                centerVisitRouteResponses
+        );
+        return centerDashboardResponse;
     }
 }

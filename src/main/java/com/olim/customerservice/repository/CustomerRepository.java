@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.awt.*;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,4 +26,5 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     Page<Customer> findAllByCenterAndRoleAndStatusNotInAndNameContaining(Center center, CustomerRole role, List<CustomerStatus> status, String name, Pageable pageable);
     Page<Customer> findAllByOwnerAndRoleAndStatusNotInAndNameContaining(UUID owner, CustomerRole role, List<CustomerStatus> status, String name, Pageable pageable);
     List<Customer> findAllByCenterAndStatusNotInAndPhoneNumberEndingWith(Center center, List<CustomerStatus> status, String phoneNumber);
+    List<Customer> findAllByCenterAndStatusNotInAndCreatedAtAfterAndCreatedAtBefore(Center center, List<CustomerStatus> status, LocalDateTime start, LocalDateTime end);
 }
