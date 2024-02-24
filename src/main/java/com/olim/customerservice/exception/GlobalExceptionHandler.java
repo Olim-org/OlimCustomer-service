@@ -2,7 +2,10 @@ package com.olim.customerservice.exception;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.olim.customerservice.exception.customexception.*;
+import feign.FeignException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +21,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.io.IOException;
+import java.util.Map;
 
 
 /**
@@ -25,9 +29,11 @@ import java.io.IOException;
  */
 @Slf4j
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
 
     private final HttpStatus HTTP_STATUS_OK = HttpStatus.OK;
+    private final ObjectMapper objectMapper;
 
     /**
      * [Exception] API 호출 시 '객체' 혹은 '파라미터' 데이터 값이 유효하지 않은 경우
@@ -217,6 +223,31 @@ public class GlobalExceptionHandler {
         final ErrorResponse response = ErrorResponse.of(ErrorCode.FORBIDDEN_ERROR, ex.getMessage());
 
         return new ResponseEntity<>(response, HttpStatus.FORBIDDEN); // 401 Unauthorized
+    }
+    @ExceptionHandler(FeignException.class)
+    public ResponseEntity feignExceptionHandler(FeignException ex) throws JsonProcessingException {
+
+        String responseJson = ex.contentUTF8();
+        Map<String, String> responseMap = objectMapper.readValue(responseJson, Map.class);
+        FeignErrorException feignErrorException = new FeignErrorException(
+                ex.status(),
+                "G998", // FeignException
+                responseMap.get("resultMsg"),
+                responseMap.get("errors"),
+                responseMap.get("reason"));
+        return new ResponseEntity<>(feignErrorException, HttpStatus.valueOf(ex.status()));
+    }
+    @ExceptionHandler(FeignException.FeignClientException.class)
+    public ResponseEntity<Object> handleFeignClientException(FeignException.FeignClientException ex) throws JsonProcessingException {
+        String responseJson = ex.contentUTF8();
+        Map<String, String> responseMap = objectMapper.readValue(responseJson, Map.class);
+        FeignErrorException feignErrorException = new FeignErrorException(
+                ex.status(),
+                "G998", // FeignException
+                responseMap.get("resultMsg"),
+                responseMap.get("errors"),
+                responseMap.get("reason"));
+        return new ResponseEntity<>(feignErrorException, HttpStatus.valueOf(ex.status()));
     }
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<Object> handleCustomException(CustomException ex) {
