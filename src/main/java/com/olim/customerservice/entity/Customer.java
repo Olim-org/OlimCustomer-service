@@ -82,6 +82,7 @@ public class Customer extends BaseEntity {
             String address,
             Center center,
             VisitRoute visitRoute,
+            String othersReason,
             Instructor instructor,
             UUID owner
     ) {
@@ -94,6 +95,7 @@ public class Customer extends BaseEntity {
         this.role = CustomerRole.CUSTOMER_USER;
         this.center = center;
         this.visitRoute = visitRoute;
+        this.othersReason = othersReason;
         this.instructor = instructor;
         this.owner = owner;
         this.status = CustomerStatus.ACTIVE;

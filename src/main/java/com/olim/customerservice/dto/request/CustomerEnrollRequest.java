@@ -33,6 +33,8 @@ public record CustomerEnrollRequest(
         @Schema(description = "센터 UUID", example = "asdfw-rwqvc-vx")
         UUID centerId,
         @Schema(description = "고객 방문 경로", example = "INSTAGRAM")
-        VisitRoute visitRoute
+        VisitRoute visitRoute,
+        @Schema(description = "기타 사유", example = "기타 사유")
+        String othersReason
 ) {
 }

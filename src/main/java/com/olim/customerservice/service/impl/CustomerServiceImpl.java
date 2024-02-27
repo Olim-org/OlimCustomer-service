@@ -81,6 +81,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .birthDate(LocalDate.parse(customerEnrollRequest.birthDate(), DateTimeFormatter.ISO_DATE))
                 .center(center.get())
                 .visitRoute(customerEnrollRequest.visitRoute())
+                .othersReason(customerEnrollRequest.othersReason())
                 .phoneNumber(customerEnrollRequest.phoneNumber())
                 .centerCustomerId(getLastCustomerNumber(center.get()) + 1)
                 .owner(userId)
