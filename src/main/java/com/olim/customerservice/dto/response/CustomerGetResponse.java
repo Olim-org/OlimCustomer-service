@@ -49,7 +49,9 @@ public record CustomerGetResponse(
         @Schema(description = "카카오톡 알림 여부", example = "true")
         Boolean kakaoTalkAlert,
         @Schema(description = "고객 생성 일", example = "YYYY-MM-dd HH:mm")
-        String cAt
+        String cAt,
+        @Schema(description = "기타 사유", example = "NONE")
+        String othersReason
 
 ) {
     public static CustomerGetResponse makeDto(Customer customer) {
@@ -72,7 +74,8 @@ public record CustomerGetResponse(
                 customer.getLifeHabit(),
                 customer.getDesiredTimeSlot(),
                 customer.getKakaoTalkAlert(),
-                customer.getCAt().format(DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm"))
+                customer.getCAt().format(DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm")),
+                customer.getOthersReason()
         );
         return response;
     }
