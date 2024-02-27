@@ -92,6 +92,7 @@ public class Customer extends BaseEntity {
         this.address = address;
         this.role = CustomerRole.CUSTOMER_USER;
         this.center = center;
+        this.visitRoute = VisitRoute.OTHERS;
         this.instructor = instructor;
         this.owner = owner;
         this.status = CustomerStatus.ACTIVE;

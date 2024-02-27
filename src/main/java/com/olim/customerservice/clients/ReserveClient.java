@@ -1,10 +1,12 @@
 package com.olim.customerservice.clients;
 
+import com.olim.customerservice.dto.request.RouteAndIdRequest;
 import com.olim.customerservice.dto.response.CenterNewCustomerResponse;
 import com.olim.customerservice.dto.response.RouteSalseResponse;
 import com.olim.customerservice.dto.response.TicketSalesResponse;
 import com.olim.customerservice.enumeration.VisitRoute;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,6 +31,6 @@ public interface ReserveClient {
     List<RouteSalseResponse> getRouteTicketSales(
             @RequestHeader("id") String userId,
             @RequestParam(value = "centerId") String centerId,
-            @RequestParam(value = "routeAndId") Map<String, List<Long>> routeAndId);
+            @RequestParam(value = "routeAndId") String routeAndId);
 
 }

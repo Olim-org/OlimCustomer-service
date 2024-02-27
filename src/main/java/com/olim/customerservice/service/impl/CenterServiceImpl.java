@@ -1,5 +1,7 @@
 package com.olim.customerservice.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.olim.customerservice.clients.ReserveClient;
 import com.olim.customerservice.clients.UserClient;
 import com.olim.customerservice.dto.request.CenterCreateRequest;
@@ -21,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.MultiValueMap;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -141,7 +144,7 @@ public class CenterServiceImpl implements CenterService {
         return centerFeignResponse;
     }
     @Override
-    public CenterDashBoardResponse getCenterDashboard(UUID userId, UUID centerId, String startDate, String endDate) {
+    public CenterDashBoardResponse getCenterDashboard(UUID userId, UUID centerId, String startDate, String endDate) throws JsonProcessingException {
         Optional<Center> center = centerRepository.findById(centerId);
         if (!center.isPresent()) {
             throw new DataNotFoundException("해당 센터를 찾을 수 없습니다.");
@@ -149,15 +152,30 @@ public class CenterServiceImpl implements CenterService {
         if (!center.get().getOwner().equals(userId)) {
             throw new PermissionFailException("해당 센터를 조회할 권한이 없습니다.");
         }
+
+
+        if (startDate.equals("") || endDate.equals("")) {
+            startDate = LocalDate.now().minusDays(31).format(DateTimeFormatter.ISO_DATE);
+            endDate = LocalDate.now().format(DateTimeFormatter.ISO_DATE);
+        } else if (startDate.equals("")) {
+            startDate = LocalDate.now().minusDays(31).format(DateTimeFormatter.ISO_DATE);
+        } else if (endDate.equals("")) {
+            endDate = LocalDate.now().format(DateTimeFormatter.ISO_DATE);
+        }
         List<Customer> customers = customerRepository.findAllByCenterAndStatusNotInAndCreatedAtAfterAndCreatedAtBefore(center.get(), List.of(CustomerStatus.DELETE, CustomerStatus.CENTER_DELETED), LocalDateTime.of(LocalDate.parse(startDate, DateTimeFormatter.ISO_DATE), LocalTime.MIN), LocalDateTime.of(LocalDate.parse(endDate, DateTimeFormatter.ISO_DATE), LocalTime.MAX));
         List<Long> customerIds = customers.stream().map(Customer::getId).toList();
 
         CenterNewCustomerResponse centerNewCustomerResponse = reserveClient.getTicketCustomersIsValid(userId.toString(), centerId.toString(), customerIds);
         List<TicketSalesResponse> ticketSalesResponses = reserveClient.getTicketSales(userId.toString(), centerId.toString(), startDate, endDate);
-        Map<String, List<Long>> routeTicketSalesResponses = customers.stream().collect(
-                Collectors.groupingBy(customer -> customer.getVisitRoute().getKey(), Collectors.mapping(Customer::getId, Collectors.toList()))
+        Map<VisitRoute, List<Long>> routeTicketSalesResponses = customers.stream().collect(
+                Collectors.groupingBy(Customer::getVisitRoute, Collectors.mapping(Customer::getId, Collectors.toList()))
         );
-        List<RouteSalseResponse> routeSalseResponses = reserveClient.getRouteTicketSales(userId.toString(), centerId.toString(), routeTicketSalesResponses);
+        Map<String, List<Long>> routeAndId = new HashMap<>();
+        for (VisitRoute visitRoute : routeTicketSalesResponses.keySet()) {
+            routeAndId.put(visitRoute.getKey(), routeTicketSalesResponses.get(visitRoute));
+        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<RouteSalseResponse> routeSalseResponses = reserveClient.getRouteTicketSales(userId.toString(), centerId.toString(), objectMapper.writeValueAsString(routeAndId));
         Map<VisitRoute, Long> routeCustomerCount = customers.stream().collect(
                 Collectors.groupingBy(Customer::getVisitRoute, Collectors.counting())
         );

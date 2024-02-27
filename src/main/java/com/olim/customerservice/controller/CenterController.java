@@ -1,5 +1,6 @@
 package com.olim.customerservice.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.olim.customerservice.dto.request.CenterCreateRequest;
 import com.olim.customerservice.dto.request.CenterModifyRequest;
 import com.olim.customerservice.dto.response.*;
@@ -103,7 +104,7 @@ public class CenterController {
             @RequestParam("centerId") String centerId,
             @RequestParam(value = "startDate", defaultValue = "") String startDate,
             @RequestParam(value = "endDate", defaultValue = "") String endDate
-    ) {
+    ) throws JsonProcessingException {
         return new ResponseEntity<>(this.centerService.getCenterDashboard(UUID.fromString(userId), UUID.fromString(centerId), startDate, endDate), HttpStatus.OK);
     }
 }

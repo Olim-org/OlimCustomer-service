@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.olim.customerservice.exception.customexception.*;
 import feign.FeignException;
+import feign.RetryableException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -239,6 +240,18 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(FeignException.FeignClientException.class)
     public ResponseEntity<Object> handleFeignClientException(FeignException.FeignClientException ex) throws JsonProcessingException {
+        String responseJson = ex.contentUTF8();
+        Map<String, String> responseMap = objectMapper.readValue(responseJson, Map.class);
+        FeignErrorException feignErrorException = new FeignErrorException(
+                ex.status(),
+                "G998", // FeignException
+                responseMap.get("resultMsg"),
+                responseMap.get("errors"),
+                responseMap.get("reason"));
+        return new ResponseEntity<>(feignErrorException, HttpStatus.valueOf(ex.status()));
+    }
+    @ExceptionHandler(RetryableException.class)
+    public ResponseEntity<Object> handleRetryableExceptionException(RetryableException ex) throws JsonProcessingException {
         String responseJson = ex.contentUTF8();
         Map<String, String> responseMap = objectMapper.readValue(responseJson, Map.class);
         FeignErrorException feignErrorException = new FeignErrorException(

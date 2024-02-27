@@ -1,7 +1,7 @@
 package com.olim.customerservice.dto.response;
 
 public record RouteTicketSalesResponse(
-        String name,
+        String ticketName,
         String value
 ) {
 }

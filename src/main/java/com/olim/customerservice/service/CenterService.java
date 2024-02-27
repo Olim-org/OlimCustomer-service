@@ -1,5 +1,6 @@
 package com.olim.customerservice.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.olim.customerservice.dto.request.CenterCreateRequest;
 import com.olim.customerservice.dto.request.CenterModifyRequest;
 import com.olim.customerservice.dto.response.*;
@@ -20,5 +21,5 @@ public interface CenterService {
     String deleteCenter(UUID userId, UUID centerId);
     @Transactional
     CenterFeignResponse getCenterInfo(UUID userId, UUID centerId);
-    CenterDashBoardResponse getCenterDashboard(UUID userId, UUID centerId, String startDate, String endDate);
+    CenterDashBoardResponse getCenterDashboard(UUID userId, UUID centerId, String startDate, String endDate) throws JsonProcessingException;
 }
