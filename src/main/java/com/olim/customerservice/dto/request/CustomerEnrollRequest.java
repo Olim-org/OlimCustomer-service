@@ -1,6 +1,7 @@
 package com.olim.customerservice.dto.request;
 
 import com.olim.customerservice.enumeration.Gender;
+import com.olim.customerservice.enumeration.VisitRoute;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -30,6 +31,8 @@ public record CustomerEnrollRequest(
         @Schema(description = "강사 ID", example = "5")
         Long instructorId,
         @Schema(description = "센터 UUID", example = "asdfw-rwqvc-vx")
-        UUID centerId
+        UUID centerId,
+        @Schema(description = "고객 방문 경로", example = "INSTAGRAM")
+        VisitRoute visitRoute
 ) {
 }
